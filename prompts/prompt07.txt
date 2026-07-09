@@ -1,0 +1,9 @@
+세미 리얼리즘 스타일
+
+Created with Google Gemini Nano banana 🍌 
+
+Prompt ⤵️ 
+An ultra-detailed, semi-realistic digital portrait with a refined contemporary editorial illustration aesthetic, combining painterly realism with subtle graphic novel influences. Cool porcelain skin is depicted with a pale bluish-grey undertone, a delicate glow, a soft, natural transparency, and realistic subsurface scattering while maintaining a matte-satin finish. High-contrast cinematic lighting, with warm yellow highlights contrasting with cool blue shadows, creates sculpted facial depth and a glossy skin reflection. The facial modeling is refined with soft tonal transitions, sharp anatomical structure, realistic eyes featuring soft olive green irises, and delicately defined, natural lips.
+The hair is illustrated with individually visible strands, elegant loose curls, and a controlled, painted texture, featuring a deep blue-black tone with subtle cool reflections. The clean yet expressive linework is enhanced by intricate micro-details and selective edge sharpening. The texture blends smooth digital painting with slightly visible brush grain, creating a polished, handcrafted look rather than photorealism.
+
+The background is rendered as an impressive illustration using a textured stone surface.  premium editorial quality, cinematic atmosphere, incredible material definition, ultra-clean rendering, sophisticated visual harmony, 8K masterpiece. Ar 9:16.

@@ -1,0 +1,6 @@
+피사체와 3D 개체 함께
+
+GPT IMAGE 2 
+
+Prompt:
+A highly professional commercial graphic design composite shot, captured from a dynamic high-angle perspective using a 35mm lens for a polished look. The subject, featuring the uploaded face as reference, is dressed in sleek smart-casual attire—a tailored navy blazer, crisp white t-shirt, and clean chinos—looking confidently upwards. The core Photoshop manipulation features a clean, hyper-realistic 'out-of-bounds' effect: the subject is holding a sleek matte-black tablet, and a vibrant, translucent 3D glass-morphism marketing growth chart physically extrudes seamlessly from the screen into the real space. The subject's other hand is precisely adjusting a glowing data node on the chart. The background is a minimalist, premium matte slate-grey with subtle, clean geometric drop shadows to emphasize the depth. The lighting is crisp, high-end studio illumination with perfectly controlled edge lights, ensuring flawless integration between the digital glass elements and the physical subject. The composition relies on pristine masking, vivid yet balanced brand colors (cyan and orange highlights), deep depth of field, and elegant negative space, delivering a top-tier, sophisticated marketing agency aesthetic.

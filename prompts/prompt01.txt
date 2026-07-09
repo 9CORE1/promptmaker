@@ -1,0 +1,27 @@
+몽환적인 스타일
+
+Gpt Image 2 on ChatGPT
+
+Prompt:
+Cinematic, intimate portrait of a young woman with short dark wavy hair, natural skin texture with subtle freckles, minimal makeup, soft neutral expression, photographed on a city street at blue hour. Shot on an 85mm lens at f/1.2 with extremely shallow depth of field, creamy bokeh, muted urban background, soft overcast light mixed with warm streetlights, fine film grain, Kodak Portra 400 color palette, desaturated tones, gentle contrast, organic skin, dreamy atmosphere, editorial fashion photography, centered composition, photorealistic, ultra-detailed, high-end magazine aesthetic.
+For the darker mood of the second image:
+Moody cinematic close-up portrait, subject partially turned toward the camera, dark wool coat, soft ambient city lights, colorful bokeh in the background, low-key lighting, shallow depth of field, subtle film grain, analog photography, Kodak Vision3 500T look, muted colors, emotional, quiet, atmospheric, realistic skin texture, premium editorial photography.
+For the elegant side-profile style of the third image:
+Elegant side-profile portrait of a woman wearing pearl earrings and a textured dress, dim ambient interior lighting, soft diffused glow, dreamy focus, cinematic composition, creamy bokeh, muted teal and warm beige color grading, medium-format film look, Kodak Portra 800, natural skin texture, minimal retouching, fine film grain, luxury editorial photography, shallow depth of field, photorealistic.
+Style keywords
+Cinematic
+Editorial fashion
+Medium-format film
+Kodak Portra 400 / Portra 800 / Vision3 500T
+Dreamy bokeh
+Natural skin texture
+Minimal retouching
+Soft diffused light
+Muted colors
+Fine film grain
+85mm lens
+f/1.2–f/1.8
+Photorealistic
+Quiet, melancholic atmosphere
+Negative prompt
+Plastic skin, oversharpening, HDR, oversaturated colors, cartoon, CGI, waxy skin, heavy beauty retouching, distorted anatomy, extra fingers, blurry face, low resolution, artifacts, text, watermark, logo.

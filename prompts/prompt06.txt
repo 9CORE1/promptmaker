@@ -1,0 +1,11 @@
+다양한 앵글 실사 이미지
+
+Created via ChatGPT 
+
+Prompt:
+
+Ultra-realistic 3×3 photo collage of the same beautiful young woman in a quiet modern library. She has long straight black hair, fair skin, wearing a bright red knitted cardigan with white buttons, light blue wide-leg jeans, and black-and-white Converse sneakers. 
+
+Each panel shows a different playful and aesthetic pose: (1) sitting cross-legged beside a tall stack of books, smiling at the camera, (2) sleeping on an open book with her head resting on folded arms, (3) balancing a stack of books on one hand with a surprised expression, (4) sitting cross-legged with a book balanced on her head, smiling, (5) reading a green hardcover book hiding half of her face, looking over the book, (6) standing between library shelves looking back at the camera, (7) close-up reading with a calm expression, (8) centered in a long symmetrical library aisle reading a book, (9) side profile sitting on the floor reading. Bright indoor lighting, realistic library bookshelves, symmetrical composition, candid lifestyle photography, natural skin texture, soft shadows, DSLR quality, ultra-detailed, photorealistic, 8K, vertical 3×3 Instagram collage.
+
+Negative Prompt: blurry, low quality, extra fingers, deformed hands, duplicate person, bad anatomy, text, watermark, logo, cropped face, distorted books, oversaturated, unrealistic lighting.

@@ -1,0 +1,5 @@
+플랫 벡터 일러스트 스타일
+
+GPT Image 2 on ChatGPT.
+
+Prompt: Transform the uploaded image into a clean, flat vector avatar illustration. Preserve the person's pose, facial features, hairstyle, clothing, and overall identity while simplifying them into a modern minimalist cartoon. Use smooth geometric shapes, solid colors, crisp edges, and no outlines or textures. Keep the facial details minimal with simple eyes, eyebrows, nose, and a subtle smile. Use soft skin tones, bold hair shapes, and simplified clothing with gentle shading only where needed. Center the subject in a front-facing portrait against a plain light gray or white background. The final result should have a friendly, polished, icon-style appearance similar to modern profile avatars, with balanced proportions, high contrast, and a clean, professional vector aesthetic.

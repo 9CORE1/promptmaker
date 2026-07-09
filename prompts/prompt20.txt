@@ -1,0 +1,6 @@
+아트워크 스타일
+
+Create eye-catching surreal artwork with ease.
+
+PROMPT ↓
+“Surreal minimalist flat illustration of [SUBJECT], vibrant [BACKGROUND COLOR] background, bold simplified shapes, exaggerated features, textured objects, soft dreamlike lighting, whimsical and slightly uncanny atmosphere, centered composition, modern editorial illustration style, clean vector aesthetic.”

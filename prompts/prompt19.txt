@@ -1,0 +1,8 @@
+텍스트와 피사체 어울러지는 스타일
+
+Created with GPT IMAGE 2 on 
+ 
+
+PROMPT:
+
+Vertical editorial poster portrait of [CHARACTER] with [HAIR], face tightly framed behind crumpled [FABRIC], oversized bold condensed sans-serif typography cut through the fabric spelling “[SPLIT]” in stacked syllables across the whole image, eyes, nose and lips visible through the letter openings, small vertical side word “[SIDE]”, tiny barcode block near the lower right, high-fashion beauty lighting, realistic skin texture, soft shadows in the folds, muted [PALETTE], clean magazine-cover composition, sharp typography hierarchy, premium print finish, no extra words, no messy layout, no cartoon style, no 3D render, ar 4:5
