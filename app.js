@@ -1050,7 +1050,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 goToStep(currentStep); // Refresh current step cards UI
                 
                 showToast(`'${selectedPreset.name}' 프리셋이 성공적으로 불러와졌습니다.`, 'success');
-                presetSelect.value = '';
             }
         });
     }
