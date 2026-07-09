@@ -284,7 +284,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 option.textContent = preset.name;
                 presetSelect.appendChild(option);
             });
-            document.getElementById('preset-selector-container').style.display = 'flex';
+            if (currentStep === 1) {
+                document.getElementById('preset-selector-container').style.display = 'flex';
+            } else {
+                document.getElementById('preset-selector-container').style.display = 'none';
+            }
         } else {
             document.getElementById('preset-selector-container').style.display = 'none';
         }
@@ -392,6 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPurposeSelector();
         updatePreview();
         updatePresetSelectOptions();
+        goToStep(1);
         const modeText = selectedMode === 'video' ? '영상' : '이미지';
         showToast(`${modeText} 제작 목적이 '${config.title}'(으)로 변경되었습니다.`, 'info');
     }
@@ -408,6 +413,29 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function goToStep(step) {
         if (step < 1 || step > totalSteps) return;
+
+        // 제작 목적, 프리셋, 작가스타일 선택바를 1단계에서만 표시
+        const purposeContainer = document.getElementById('purpose-selector-container');
+        const presetContainer = document.getElementById('preset-selector-container');
+        const artistStyleContainer = document.getElementById('artist-style-selector-container');
+
+        if (step === 1) {
+            if (purposeContainer) purposeContainer.style.display = 'block';
+            if (artistStyleContainer) artistStyleContainer.style.display = 'flex';
+            
+            const presets = window.presetsConfig[selectedPurpose];
+            if (presetContainer) {
+                if (presets && presets.length > 0) {
+                    presetContainer.style.display = 'flex';
+                } else {
+                    presetContainer.style.display = 'none';
+                }
+            }
+        } else {
+            if (purposeContainer) purposeContainer.style.display = 'none';
+            if (presetContainer) presetContainer.style.display = 'none';
+            if (artistStyleContainer) artistStyleContainer.style.display = 'none';
+        }
 
         // Automatically hide selected artist style box when leaving Step 1
         if (step !== 1) {
