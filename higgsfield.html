@@ -159,11 +159,11 @@
                                         </div>
                                         <textarea id="hf-prompt" class="form-control" rows="4" placeholder="생성하고 싶은 이미지 또는 비디오에 대한 묘사를 영어로 입력하세요."></textarea>
                                         <div class="prompt-suggestions">
-                                            <span class="suggestion-tag">Cinematic</span>
-                                            <span class="suggestion-tag">8K Ultra</span>
-                                            <span class="suggestion-tag">Detailed</span>
-                                            <span class="suggestion-tag">Slow Motion</span>
-                                            <span class="suggestion-tag">Photoreal</span>
+                                            <span class="suggestion-tag">Dramatic Cinematic Lighting</span>
+                                            <span class="suggestion-tag">8K Ultra-HD Resolution</span>
+                                            <span class="suggestion-tag">Hyper-Realistic Textures</span>
+                                            <span class="suggestion-tag">Smooth Slow Motion 60fps</span>
+                                            <span class="suggestion-tag">Photorealistic Masterpiece</span>
                                         </div>
                                     </div>
 
@@ -185,7 +185,7 @@
 
                                     <!-- Advanced Parameter Toggles -->
                                     <div class="parameters-grid">
-                                        <div class="form-group">
+                                        <div class="form-group" style="max-width: 240px;">
                                             <label for="hf-aspect-ratio">화면 비율 (Aspect Ratio)</label>
                                             <select id="hf-aspect-ratio" class="form-control">
                                                 <option value="1:1">1:1 (Square)</option>
@@ -195,7 +195,7 @@
                                                 <option value="2:3">2:3 (Portrait)</option>
                                             </select>
                                         </div>
-                                        <div class="form-group video-only-param" style="display: none;">
+                                        <div class="form-group video-only-param" style="display: none; max-width: 240px;">
                                             <label for="hf-duration">재생 시간 (Duration)</label>
                                             <select id="hf-duration" class="form-control">
                                                 <option value="4" selected>4 Seconds</option>
@@ -203,12 +203,12 @@
                                                 <option value="12">12 Seconds</option>
                                             </select>
                                         </div>
-                                        <div class="form-group video-only-param" style="display: none;">
-                                            <label for="hf-motion-strength">모션 강도 (Motion)</label>
-                                            <input type="range" id="hf-motion-strength" min="1" max="10" value="5" class="slider-control">
-                                            <span class="slider-val" id="motion-val">5</span>
-                                        </div>
-                                        <div class="form-group image-only-param">
+                                         <div class="form-group video-only-param" style="display: none;">
+                                             <label for="hf-motion-strength">모션 강도 (Motion)</label>
+                                             <span class="slider-val" id="motion-val">5</span>
+                                             <input type="range" id="hf-motion-strength" min="1" max="10" value="5" class="slider-control">
+                                         </div>
+                                        <div class="form-group image-only-param" style="max-width: 240px;">
                                             <label for="hf-safety">안전 필터 레벨 (Safety)</label>
                                             <select id="hf-safety" class="form-control">
                                                 <option value="1">1 (Strict)</option>
@@ -216,7 +216,7 @@
                                                 <option value="3">3 (Relaxed)</option>
                                             </select>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" style="max-width: 240px;">
                                             <label for="hf-seed">시드값 (Seed)</label>
                                             <input type="number" id="hf-seed" class="form-control" placeholder="무작위 (랜덤)" min="-1" step="1">
                                         </div>

@@ -336,16 +336,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleTaskParameters() {
         if (currentTask === 'text-to-image') {
             videoOnlyParams.forEach(el => el.style.display = 'none');
-            imageOnlyParams.forEach(el => el.style.display = 'block');
+            imageOnlyParams.forEach(el => el.style.display = 'flex');
             imageInputContainer.style.display = 'none';
         } else if (currentTask === 'text-to-video') {
-            videoOnlyParams.forEach(el => el.style.display = 'block');
+            videoOnlyParams.forEach(el => el.style.display = 'flex');
             imageOnlyParams.forEach(el => el.style.display = 'none');
             imageInputContainer.style.display = 'none';
         } else if (currentTask === 'image-to-video') {
-            videoOnlyParams.forEach(el => el.style.display = 'block');
+            videoOnlyParams.forEach(el => el.style.display = 'flex');
             imageOnlyParams.forEach(el => el.style.display = 'none');
-            imageInputContainer.style.display = 'block';
+            imageInputContainer.style.display = 'flex';
         }
     }
 
