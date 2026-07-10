@@ -321,6 +321,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Redistribute timeline scene times evenly based on total video duration
+     */
+    function redistributeTimelineTimes(timeline, totalSec) {
+        const n = timeline.length;
+        if (n === 0) return;
+        
+        let currentStart = 0;
+        for (let i = 0; i < n; i++) {
+            const end = Math.round(((i + 1) / n) * totalSec);
+            timeline[i].start = currentStart;
+            timeline[i].end = end;
+            currentStart = end;
+        }
+    }
+
+    /**
      * Initialize timeline array
      */
     function initializeTimeline() {
@@ -355,17 +371,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return timeline;
         }
         
-        // Default timeline if no formData exists: Only 1 Scene
-        const config = currentConfigs[selectedPurpose];
-        let defaultDesc = '';
-        if (config.examples && config.examples['step7-scene1']) {
-            const exampleParsed = parseTimelineString(config.examples['step7-scene1']);
-            defaultDesc = exampleParsed.desc;
-        }
+        // Default timeline if no formData exists: Only 1 Scene (representing the entire video duration, initially blank)
         timeline.push({
             start: 0,
             end: totalSec,
-            desc: defaultDesc
+            desc: ''
         });
         return timeline;
     }
@@ -441,12 +451,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const mountPoint = document.getElementById('timeline-editor-mount');
         if (!mountPoint) return;
         
+        const totalSec = getVideoTotalDuration();
+
         if (!formData.timeline) {
             formData.timeline = initializeTimeline();
             syncTimelineToFormData();
+        } else {
+            const last = formData.timeline[formData.timeline.length - 1];
+            if (last && last.end !== totalSec) {
+                last.end = totalSec;
+                syncTimelineToFormData();
+            }
         }
-        
-        const totalSec = getVideoTotalDuration();
         
         let html = `
             <div class="timeline-editor-container">
@@ -588,16 +604,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnAddScene = mountPoint.querySelector('#btn-add-scene');
         if (btnAddScene) {
             const lastScene = formData.timeline[formData.timeline.length - 1];
-            const lastDuration = lastScene.end - lastScene.start;
+            const lastDuration = lastScene ? (lastScene.end - lastScene.start) : 0;
             
-            if (lastDuration <= 1) {
+            if (formData.timeline.length >= 8 || lastDuration <= 1) {
                 btnAddScene.disabled = true;
                 btnAddScene.style.opacity = '0.5';
                 btnAddScene.style.cursor = 'not-allowed';
-                btnAddScene.title = "더 이상 장면을 분할할 수 없습니다 (남은 시간 부족)";
+                btnAddScene.title = "더 이상 장면을 추가할 수 없습니다 (최대 8개 제한 또는 남은 시간 부족)";
             }
             
             btnAddScene.addEventListener('click', () => {
+                if (formData.timeline.length >= 8) return;
+                
                 const last = formData.timeline[formData.timeline.length - 1];
                 const mid = Math.floor((last.start + last.end) / 2);
                 
@@ -615,7 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 syncTimelineToFormData();
                 renderTimelineEditor();
                 updatePreview();
-                showToast('새 장면이 추가되었습니다. 시간을 조절해 보세요.', 'success');
+                showToast('새 장면이 추가되었습니다. 남은 시간이 반으로 분할되었습니다.', 'success');
             });
         }
         
@@ -629,7 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     syncTimelineToFormData();
                     renderTimelineEditor();
                     updatePreview();
-                    showToast('장면이 삭제되었습니다. 시간이 재조정되었습니다.', 'info');
+                    showToast('장면이 삭제되었습니다. 남은 시간이 이전 장면에 통합되었습니다.', 'info');
                 }
             });
         });
