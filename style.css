@@ -432,6 +432,21 @@ textarea.form-control {
     transform: translateY(-1px);
 }
 
+.tag.selected {
+    background-color: rgba(139, 92, 246, 0.2) !important;
+    border-color: var(--color-primary) !important;
+    color: #e9d5ff !important;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+    font-weight: 700;
+}
+
+body.light-mode .tag.selected {
+    background-color: rgba(139, 92, 246, 0.1) !important;
+    border-color: var(--color-primary) !important;
+    color: var(--color-primary) !important;
+    box-shadow: 0 0 8px rgba(139, 92, 246, 0.25);
+}
+
 /* Navigation Footer */
 .nav-footer {
     display: flex;

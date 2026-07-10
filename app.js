@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const exampleGuideHtml = exampleText ? `<div class="field-example-guide"><i class="fa-solid fa-circle-info"></i> 예시: ${exampleText}</div>` : '';
 
                     cardHtml += `
-                        <div class="form-group">
+                        <div class="form-group" data-field-id="${id}">
                             <label for="${id}">${f.label}${reqMark}</label>
                             ${exampleGuideHtml}
                     `;
@@ -197,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     formData[id] = e.target.value;
                     updatePreview();
                     updateStepCompletedState(id);
+                    updateTagHighlights(id);
                 });
 
                 // Auto-append '초' for video length if only numbers are entered on blur
@@ -209,6 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             formData[id] = formattedVal;
                             updatePreview();
                             updateStepCompletedState(id);
+                            updateTagHighlights(id);
                         }
                     });
                 }
@@ -247,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     formData[targetId] = inputEl.value;
                     updatePreview();
                     updateStepCompletedState(targetId);
+                    updateTagHighlights(targetId);
                     inputEl.focus();
                 }
             });
@@ -695,6 +698,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Update visual selected states on suggestion tags dynamically
+     */
+    function updateTagHighlights(fieldId) {
+        const fieldContainer = document.querySelector(`.form-group[data-field-id="${fieldId}"]`);
+        if (!fieldContainer) return;
+        
+        const value = (formData[fieldId] || '').trim();
+        const tags = fieldContainer.querySelectorAll('.tag');
+        const isNegativeField = (fieldId === 'step9-avoid-sfx' || fieldId === 'step7-avoid-errors');
+        
+        tags.forEach(tag => {
+            const tagText = tag.getAttribute('data-tag-val') || tag.textContent.trim();
+            if (isNegativeField) {
+                const items = value.split(',').map(item => item.trim());
+                if (items.includes(tagText)) {
+                    tag.classList.add('selected');
+                } else {
+                    tag.classList.remove('selected');
+                }
+            } else {
+                if (tagText === value) {
+                    tag.classList.add('selected');
+                } else {
+                    tag.classList.remove('selected');
+                }
+            }
+        });
+    }
+
+    /**
      * Render dynamic Purpose Selector Grid at the top of the form area
      */
     function renderPurposeSelector() {
@@ -787,7 +820,15 @@ document.addEventListener('DOMContentLoaded', () => {
      * Check if user has typed anything in the fields
      */
     function hasAnyInputData() {
-        return Object.values(formData).some(val => val && val.trim() !== '');
+        return Object.values(formData).some(val => {
+            if (typeof val === 'string') {
+                return val.trim() !== '';
+            }
+            if (Array.isArray(val)) {
+                return val.some(scene => scene.desc && scene.desc.trim() !== '');
+            }
+            return false;
+        });
     }
 
     /**
@@ -860,6 +901,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (selectedMode === 'video' && currentStep === 7) {
                 renderTimelineEditor();
+            } else {
+                // Highlight tags for all fields in the current step on card load
+                const stepFields = Object.keys(config.fields).filter(id => config.fields[id].step === currentStep);
+                stepFields.forEach(id => updateTagHighlights(id));
             }
         }
 
@@ -1477,21 +1522,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const value = formData[id];
                     const el = document.getElementById(id);
                     if (el) {
-                        el.value = value;
+                        el.value = value || '';
                     }
-                    
-                    const fieldContainer = document.querySelector(`.form-group[data-field-id="${id}"]`);
-                    if (fieldContainer) {
-                        const tags = fieldContainer.querySelectorAll('.tag');
-                        tags.forEach(tag => {
-                            const tagText = tag.getAttribute('data-tag-val') || tag.textContent.trim();
-                            if (tagText === value) {
-                                tag.classList.add('selected');
-                            } else {
-                                tag.classList.remove('selected');
-                            }
-                        });
-                    }
+                    updateTagHighlights(id);
                 });
                 
                 // Re-update all nav step completed checkmarks
@@ -1534,6 +1567,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (inputEl) {
                         inputEl.value = val;
                     }
+                    updateTagHighlights(id);
                 });
                 
                 // Update completion states for these steps
@@ -1596,4 +1630,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePreview();
     updatePresetSelectOptions();
     populateArtistStyleOptions();
+    // Highlight initial tags on boot
+    Object.keys(initialConfig.fields).forEach(id => {
+        updateTagHighlights(id);
+    });
 });
