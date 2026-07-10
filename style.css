@@ -346,7 +346,8 @@ body.light-mode .artist-style-img {
 }
 
 .scrollable-card-body {
-    max-height: 480px;
+    max-height: calc(100vh - 300px);
+    min-height: 380px;
     overflow-y: auto;
     padding-right: 10px;
 }

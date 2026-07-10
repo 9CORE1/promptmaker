@@ -126,54 +126,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-            // Find all fields belonging to this step
-            const fieldsInStep = Object.keys(config.fields).filter(id => config.fields[id].step === s);
-            
-            // Build form inputs
-            fieldsInStep.forEach(id => {
-                const f = config.fields[id];
-                const value = formData[id] || '';
-                const reqMark = f.required ? '<span class="required-mark">*</span>' : '';
-                const placeholderText = f.required ? '내용을 입력하세요.' : "미입력 시 '없음'이 자동 적용됩니다.";
-                
-                const exampleText = (config.examples && config.examples[id]) ? config.examples[id] : '';
-                const exampleGuideHtml = exampleText ? `<div class="field-example-guide"><i class="fa-solid fa-circle-info"></i> 예시: ${exampleText}</div>` : '';
-
+            if (selectedMode === 'video' && s === 7) {
                 cardHtml += `
-                    <div class="form-group">
-                        <label for="${id}">${f.label}${reqMark}</label>
-                        ${exampleGuideHtml}
+                    <div id="timeline-editor-mount"></div>
                 `;
+            } else {
+                // Find all fields belonging to this step
+                const fieldsInStep = Object.keys(config.fields).filter(id => config.fields[id].step === s);
                 
-                if (f.type === 'textarea') {
-                    cardHtml += `
-                        <textarea id="${id}" rows="3" placeholder="${placeholderText}" class="form-control animate-focus">${value}</textarea>
-                    `;
-                } else {
-                    cardHtml += `
-                        <input type="text" id="${id}" placeholder="${placeholderText}" value="${value}" class="form-control animate-focus">
-                    `;
-                }
+                // Build form inputs
+                fieldsInStep.forEach(id => {
+                    const f = config.fields[id];
+                    const value = formData[id] || '';
+                    const reqMark = f.required ? '<span class="required-mark">*</span>' : '';
+                    const placeholderText = f.required ? '내용을 입력하세요.' : "미입력 시 '없음'이 자동 적용됩니다.";
+                    
+                    const exampleText = (config.examples && config.examples[id]) ? config.examples[id] : '';
+                    const exampleGuideHtml = exampleText ? `<div class="field-example-guide"><i class="fa-solid fa-circle-info"></i> 예시: ${exampleText}</div>` : '';
 
-                // Build tags list. Optional fields get '없음' at the beginning.
-                const tagsList = f.tags ? [...f.tags] : [];
-                if (!f.required) {
-                    tagsList.unshift('없음');
-                }
+                    cardHtml += `
+                        <div class="form-group">
+                            <label for="${id}">${f.label}${reqMark}</label>
+                            ${exampleGuideHtml}
+                    `;
+                    
+                    if (f.type === 'textarea') {
+                        cardHtml += `
+                            <textarea id="${id}" rows="3" placeholder="${placeholderText}" class="form-control animate-focus">${value}</textarea>
+                        `;
+                    } else {
+                        cardHtml += `
+                            <input type="text" id="${id}" placeholder="${placeholderText}" value="${value}" class="form-control animate-focus">
+                        `;
+                    }
 
-                if (tagsList.length > 0) {
-                    cardHtml += `<div class="tags-suggest">`;
-                    tagsList.forEach(tagText => {
-                        // 비디오/이미지 전 영역 촬영 전문설명 툴팁 주입
-                        const tooltipText = getTagTooltip(tagText);
-                        const tooltipAttr = tooltipText ? ` data-tooltip="${tooltipText}"` : '';
-                        cardHtml += `<span class="tag"${tooltipAttr} data-target="${id}">${tagText}</span>`;
-                    });
+                    // Build tags list. Optional fields get '없음' at the beginning.
+                    const tagsList = f.tags ? [...f.tags] : [];
+                    if (!f.required) {
+                        tagsList.unshift('없음');
+                    }
+
+                    if (tagsList.length > 0) {
+                        cardHtml += `<div class="tags-suggest">`;
+                        tagsList.forEach(tagText => {
+                            // 비디오/이미지 전 영역 촬영 전문설명 툴팁 주입
+                            const tooltipText = getTagTooltip(tagText);
+                            const tooltipAttr = tooltipText ? ` data-tooltip="${tooltipText}"` : '';
+                            cardHtml += `<span class="tag"${tooltipAttr} data-target="${id}">${tagText}</span>`;
+                        });
+                        cardHtml += `</div>`;
+                    }
+
                     cardHtml += `</div>`;
-                }
-
-                cardHtml += `</div>`;
-            });
+                });
+            }
 
             cardHtml += `
                     </div>
@@ -267,6 +273,382 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return true; // Optional fields don't block
         });
+    }
+
+    /**
+     * Get total video duration parsed from Step 1
+     */
+    function getVideoTotalDuration() {
+        const lengthVal = formData['step1-length'] || '15초';
+        const num = parseInt(lengthVal.replace(/[^0-9]/g, ''), 10);
+        return isNaN(num) || num <= 0 ? 15 : num;
+    }
+
+    /**
+     * Format seconds to MM:SS string
+     */
+    function formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    /**
+     * Parse start/end times and description from preset/field strings
+     */
+    function parseTimelineString(str) {
+        const match = str.match(/^(\d{2}):(\d{2})\s*[-–—]\s*(\d{2}):(\d{2})\s*(.*)$/s);
+        if (match) {
+            const startMin = parseInt(match[1], 10);
+            const startSec = parseInt(match[2], 10);
+            const endMin = parseInt(match[3], 10);
+            const endSec = parseInt(match[4], 10);
+            const desc = match[5].trim();
+            return {
+                start: startMin * 60 + startSec,
+                end: endMin * 60 + endSec,
+                desc: desc
+            };
+        }
+        return {
+            start: null,
+            end: null,
+            desc: str
+        };
+    }
+
+    /**
+     * Initialize timeline array
+     */
+    function initializeTimeline() {
+        const totalSec = getVideoTotalDuration();
+        const timeline = [];
+        
+        let parsedCount = 0;
+        for (let i = 1; i <= 8; i++) {
+            const val = formData[`step7-scene${i}`];
+            if (val && val.trim() !== '') {
+                const parsed = parseTimelineString(val);
+                if (parsed.start !== null && parsed.end !== null) {
+                    timeline.push(parsed);
+                    parsedCount++;
+                } else {
+                    const start = parsedCount * 2;
+                    timeline.push({
+                        start: start,
+                        end: Math.min(start + 2, totalSec),
+                        desc: val
+                    });
+                    parsedCount++;
+                }
+            }
+        }
+        
+        if (timeline.length > 0) {
+            const last = timeline[timeline.length - 1];
+            if (last.end !== totalSec) {
+                last.end = totalSec;
+            }
+            return timeline;
+        }
+        
+        // Default timeline if no formData exists: Only 1 Scene
+        const config = currentConfigs[selectedPurpose];
+        let defaultDesc = '';
+        if (config.examples && config.examples['step7-scene1']) {
+            const exampleParsed = parseTimelineString(config.examples['step7-scene1']);
+            defaultDesc = exampleParsed.desc;
+        }
+        timeline.push({
+            start: 0,
+            end: totalSec,
+            desc: defaultDesc
+        });
+        return timeline;
+    }
+
+    /**
+     * Sync timeline array back to formData fields
+     */
+    function syncTimelineToFormData() {
+        for (let i = 1; i <= 8; i++) {
+            formData[`step7-scene${i}`] = '';
+        }
+        
+        if (formData.timeline && formData.timeline.length > 0) {
+            formData.timeline.forEach((scene, index) => {
+                const key = `step7-scene${index + 1}`;
+                if (index < 8) {
+                    formData[key] = `${formatTime(scene.start)} – ${formatTime(scene.end)} ${scene.desc}`;
+                }
+            });
+        }
+    }
+
+    /**
+     * Get recommended tags for the given timeline scene index
+     */
+    function getTimelineTagsForIndex(index) {
+        const config = currentConfigs[selectedPurpose];
+        const sceneKey = `step7-scene${Math.min(index + 1, 8)}`;
+        if (config.fields[sceneKey] && config.fields[sceneKey].tags) {
+            return config.fields[sceneKey].tags;
+        }
+        return [];
+    }
+
+    /**
+     * Replace template timeline placeholders with dynamic output
+     */
+    function replaceTimelineBlock(templateText, isHtml = false) {
+        if (selectedMode !== 'video') return templateText;
+        
+        if (!formData.timeline) {
+            formData.timeline = initializeTimeline();
+        }
+        
+        let timelineText = '';
+        if (formData.timeline && formData.timeline.length > 0) {
+            formData.timeline.forEach(scene => {
+                const timeStr = `${formatTime(scene.start)}–${formatTime(scene.end)}`;
+                if (isHtml) {
+                    const cleanDesc = scene.desc.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    timelineText += `<div style="margin-bottom: 12px;"><span class="highlight-token" style="background-color: rgba(124, 58, 237, 0.15); border-color: rgba(124, 58, 237, 0.35); color: #a78bfa;">${timeStr}</span> <span style="font-weight:700;">${cleanDesc || '<span style="opacity:0.5;">(장면 묘사 없음)</span>'}</span></div>`;
+                } else {
+                    timelineText += `${timeStr}\n${scene.desc}\n\n`;
+                }
+            });
+        } else {
+            timelineText = isHtml ? '<div style="opacity:0.5;">(타임라인 비어 있음)</div>' : '(타임라인 비어 있음)\n';
+        }
+        
+        if (isHtml) {
+            const regex = /<span class="preview-section-header">\[타임라인\]<\/span>[\s\S]*?(<span class="preview-section-header">\[오디오\]<\/span>)/;
+            return templateText.replace(regex, `<span class="preview-section-header">[타임라인]</span>\n<div style="padding-left: 10px; margin-top: 10px; margin-bottom: 20px;">${timelineText.trim()}</div>\n\n$1`);
+        } else {
+            const regex = /\[타임라인\][\s\S]*?(\[오디오\])/;
+            return templateText.replace(regex, `[타임라인]\n${timelineText.trim()}\n\n$1`);
+        }
+    }
+
+    /**
+     * Render the timeline builder UI inside Step 7
+     */
+    function renderTimelineEditor() {
+        const mountPoint = document.getElementById('timeline-editor-mount');
+        if (!mountPoint) return;
+        
+        if (!formData.timeline) {
+            formData.timeline = initializeTimeline();
+            syncTimelineToFormData();
+        }
+        
+        const totalSec = getVideoTotalDuration();
+        
+        let html = `
+            <div class="timeline-editor-container">
+                <div class="timeline-summary-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(124, 58, 237, 0.08); border: 1px solid var(--border-glass-focus); padding: 12px 20px; border-radius: 8px;">
+                    <span style="font-size: 0.95rem; color: var(--text-primary);"><i class="fa-solid fa-clock" style="color: var(--color-primary); margin-right: 6px;"></i> 전체 설정 시간: <strong style="color: var(--color-primary);">${totalSec}초</strong></span>
+                    <button type="button" id="btn-reset-timeline" class="btn-secondary btn-small" style="font-size: 0.85rem; padding: 6px 12px; border-color: rgba(239, 68, 68, 0.4); color: #f87171;"><i class="fa-solid fa-rotate-left" style="margin-right: 4px;"></i> 초기화</button>
+                </div>
+                <div id="timeline-scenes-list" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px;">
+        `;
+        
+        formData.timeline.forEach((scene, index) => {
+            const isLast = (index === formData.timeline.length - 1);
+            
+            let optionsHtml = '';
+            const minEnd = scene.start + 1;
+            const maxEnd = totalSec - (formData.timeline.length - 1 - index);
+            
+            for (let t = minEnd; t <= maxEnd; t++) {
+                const selectedAttr = (scene.end === t) ? 'selected' : '';
+                optionsHtml += `<option value="${t}" ${selectedAttr}>${formatTime(t)}</option>`;
+            }
+            
+            const timeSelectHtml = isLast 
+                ? `<span style="font-weight: 700; color: var(--color-secondary); font-size: 1rem;">${formatTime(scene.end)}</span>`
+                : `<select class="form-control scene-end-time-select" data-index="${index}" style="width: 90px; height: 32px; padding: 0 8px; font-size: 0.9rem; font-weight: 700; color: var(--color-secondary); background: rgba(0,0,0,0.3) !important;">${optionsHtml}</select>`;
+            
+            const deleteButtonHtml = (formData.timeline.length > 1 && index > 0)
+                ? `<button type="button" class="btn-delete-scene" data-index="${index}" title="장면 삭제" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 4px; font-size: 1rem; transition: color 0.2s;"><i class="fa-solid fa-trash-can"></i></button>`
+                : '';
+                
+            const sceneTags = getTimelineTagsForIndex(index);
+            let tagsHtml = '';
+            if (sceneTags.length > 0) {
+                tagsHtml += `<div class="tags-suggest" style="margin-top: 8px;">`;
+                sceneTags.forEach(tagText => {
+                    const tooltipText = getTagTooltip(tagText);
+                    const tooltipAttr = tooltipText ? ` data-tooltip="${tooltipText}"` : '';
+                    tagsHtml += `<span class="tag" ${tooltipAttr} data-scene-index="${index}">${tagText}</span>`;
+                });
+                tagsHtml += `</div>`;
+            }
+            
+            html += `
+                <div class="timeline-scene-item" style="border: 1px solid var(--border-glass-focus); padding: 16px; border-radius: 8px; background: rgba(255, 255, 255, 0.02); display: flex; flex-direction: column; gap: 10px;">
+                    <div class="scene-item-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="badge" style="background: var(--color-primary); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">장면 ${index + 1}</span>
+                            <div class="scene-time-controls" style="display: flex; align-items: center; gap: 8px; font-size: 0.95rem;">
+                                <span style="font-weight: 700; color: var(--text-primary);">${formatTime(scene.start)}</span>
+                                <span style="color: var(--text-muted); font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i></span>
+                                ${timeSelectHtml}
+                                <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 4px;">(${scene.end - scene.start}초 분량)</span>
+                            </div>
+                        </div>
+                        ${deleteButtonHtml}
+                    </div>
+                    <div class="scene-item-body">
+                        <textarea class="form-control scene-desc-textarea animate-focus" data-index="${index}" rows="2" placeholder="이 장면에 대한 영상 연출 및 묘사를 작성해 주세요." style="width: 100%; min-height: 60px; font-weight: 700;"></textarea>
+                        ${tagsHtml}
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `
+                </div>
+                <div class="timeline-actions" style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 10px;">
+                    <button type="button" id="btn-add-scene" class="btn-secondary" style="font-size: 0.95rem; padding: 10px 24px; display: inline-flex; align-items: center; gap: 8px; width: 100%; justify-content: center; border-radius: 8px;">
+                        <i class="fa-solid fa-plus"></i> 장면 추가
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        mountPoint.innerHTML = html;
+        
+        // Populate textareas with value using JS (safer than template literals to avoid quote escaping issues)
+        formData.timeline.forEach((scene, index) => {
+            const textarea = mountPoint.querySelector(`.scene-desc-textarea[data-index="${index}"]`);
+            if (textarea) {
+                textarea.value = scene.desc;
+            }
+        });
+        
+        mountPoint.querySelectorAll('.scene-desc-textarea').forEach(textarea => {
+            textarea.addEventListener('input', (e) => {
+                const idx = parseInt(textarea.getAttribute('data-index'), 10);
+                formData.timeline[idx].desc = e.target.value;
+                syncTimelineToFormData();
+                updatePreview();
+            });
+        });
+        
+        mountPoint.querySelectorAll('.scene-end-time-select').forEach(select => {
+            select.addEventListener('change', (e) => {
+                const idx = parseInt(select.getAttribute('data-index'), 10);
+                const newEnd = parseInt(e.target.value, 10);
+                
+                formData.timeline[idx].end = newEnd;
+                
+                for (let i = idx + 1; i < formData.timeline.length; i++) {
+                    formData.timeline[i].start = formData.timeline[i - 1].end;
+                    formData.timeline[i].end = Math.max(formData.timeline[i].start + 1, formData.timeline[i].end);
+                }
+                
+                const lastIdx = formData.timeline.length - 1;
+                formData.timeline[lastIdx].start = formData.timeline[lastIdx - 1].end;
+                formData.timeline[lastIdx].end = totalSec;
+                
+                syncTimelineToFormData();
+                renderTimelineEditor();
+                updatePreview();
+            });
+        });
+        
+        mountPoint.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                const idx = parseInt(tag.getAttribute('data-scene-index'), 10);
+                const tagVal = tag.textContent;
+                const textarea = mountPoint.querySelector(`.scene-desc-textarea[data-index="${idx}"]`);
+                if (textarea) {
+                    let currentVal = textarea.value.trim();
+                    if (currentVal === '' || currentVal === '없음') {
+                        textarea.value = tagVal;
+                    } else {
+                        const items = currentVal.split(',').map(item => item.trim());
+                        if (!items.includes(tagVal)) {
+                            textarea.value = currentVal + ', ' + tagVal;
+                        }
+                    }
+                    formData.timeline[idx].desc = textarea.value;
+                    syncTimelineToFormData();
+                    updatePreview();
+                    textarea.focus();
+                }
+            });
+        });
+        
+        const btnAddScene = mountPoint.querySelector('#btn-add-scene');
+        if (btnAddScene) {
+            const lastScene = formData.timeline[formData.timeline.length - 1];
+            const lastDuration = lastScene.end - lastScene.start;
+            
+            if (lastDuration <= 1) {
+                btnAddScene.disabled = true;
+                btnAddScene.style.opacity = '0.5';
+                btnAddScene.style.cursor = 'not-allowed';
+                btnAddScene.title = "더 이상 장면을 분할할 수 없습니다 (남은 시간 부족)";
+            }
+            
+            btnAddScene.addEventListener('click', () => {
+                const last = formData.timeline[formData.timeline.length - 1];
+                const mid = Math.floor((last.start + last.end) / 2);
+                
+                if (mid <= last.start) return;
+                
+                const originalEnd = last.end;
+                last.end = mid;
+                
+                formData.timeline.push({
+                    start: mid,
+                    end: originalEnd,
+                    desc: ''
+                });
+                
+                syncTimelineToFormData();
+                renderTimelineEditor();
+                updatePreview();
+                showToast('새 장면이 추가되었습니다. 시간을 조절해 보세요.', 'success');
+            });
+        }
+        
+        mountPoint.querySelectorAll('.btn-delete-scene').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.getAttribute('data-index'), 10);
+                if (idx > 0) {
+                    formData.timeline[idx - 1].end = formData.timeline[idx].end;
+                    formData.timeline.splice(idx, 1);
+                    
+                    syncTimelineToFormData();
+                    renderTimelineEditor();
+                    updatePreview();
+                    showToast('장면이 삭제되었습니다. 시간이 재조정되었습니다.', 'info');
+                }
+            });
+        });
+
+        const btnResetTimeline = mountPoint.querySelector('#btn-reset-timeline');
+        if (btnResetTimeline) {
+            btnResetTimeline.addEventListener('click', () => {
+                if (confirm('타임라인을 초기화하시겠습니까? 현재 작성된 모든 장면이 삭제되고 장면 1개로 초기화됩니다.')) {
+                    // Clear the individual form fields first so initializeTimeline creates only 1 scene
+                    for (let i = 1; i <= 8; i++) {
+                        formData[`step7-scene${i}`] = '';
+                    }
+                    delete formData.timeline;
+                    
+                    formData.timeline = initializeTimeline();
+                    syncTimelineToFormData();
+                    renderTimelineEditor();
+                    updatePreview();
+                    showToast('타임라인이 초기화되었습니다.', 'info');
+                }
+            });
+        }
     }
 
     /**
@@ -475,6 +857,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             const activeCard = document.getElementById(`step-card-${currentStep}`);
             if (activeCard) activeCard.classList.add('active');
+            
+            if (selectedMode === 'video' && currentStep === 7) {
+                renderTimelineEditor();
+            }
         }
 
         // Update active class in sidebar nav list
@@ -657,6 +1043,10 @@ document.addEventListener('DOMContentLoaded', () => {
             result = result.replace(new RegExp(escapeRegExp(f.token), 'g'), value);
         });
 
+        if (selectedMode === 'video') {
+            result = replaceTimelineBlock(result, false);
+        }
+
         // 3. Post-Process the Assembled Text Prompt to resolve conflicts
         
         // If Product Only (인물 없음) is active, completely strip out Model/Clothing sections
@@ -747,6 +1137,10 @@ document.addEventListener('DOMContentLoaded', () => {
             previewHtml = previewHtml.replace(new RegExp(escapeRegExp(f.token), 'g'), replacedHtml);
         });
 
+        if (selectedMode === 'video') {
+            previewHtml = replaceTimelineBlock(previewHtml, true);
+        }
+
         previewContent.innerHTML = previewHtml;
     }
 
@@ -813,6 +1207,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+        if (currentStep === 7 && selectedMode === 'video') {
+            delete formData.timeline;
+            renderTimelineEditor();
+        }
         updatePreview();
         showToast(`${currentStep}단계의 예시 데이터가 입력되었습니다.`, 'success');
     });
@@ -833,6 +1231,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+        delete formData.timeline;
         
         updatePreview();
         if (currentStep === totalSteps) {
@@ -856,6 +1255,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const navItem = document.querySelector(`.nav-item[data-step="${config.fields[id].step}"]`);
                 if (navItem) navItem.classList.remove('completed');
             });
+            delete formData.timeline;
             
             if (selectedArtistStyleBox) {
                 selectedArtistStyleBox.style.display = 'none';
@@ -1006,6 +1406,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Object.keys(config.fields).forEach(id => {
             formData[id] = '';
         });
+        delete formData.timeline;
 
         // Reset step
         currentStep = 1;
@@ -1045,6 +1446,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 Object.keys(selectedPreset.fields).forEach(id => {
                     formData[id] = selectedPreset.fields[id];
                 });
+                delete formData.timeline;
                 
                 // Re-render UI inputs to match the new formData values
                 const config = currentConfigs[selectedPurpose];
