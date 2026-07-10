@@ -1294,6 +1294,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /**
+     * Send final output to Higgsfield Playground
+     */
+    const btnSendHiggsfield = document.getElementById('btn-send-higgsfield');
+    if (btnSendHiggsfield) {
+        btnSendHiggsfield.addEventListener('click', () => {
+            if (!handleValidationAndAlert()) {
+                return;
+            }
+            
+            const promptText = finalOutputTextarea.value.trim();
+            if (promptText) {
+                localStorage.setItem('higgsfield_temp_prompt', promptText);
+                showToast('프롬프트가 임시 저장되었습니다. Higgsfield 페이지로 이동합니다...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'higgsfield.html';
+                }, 1000);
+            } else {
+                showToast('전송할 프롬프트가 존재하지 않습니다. 먼저 단계를 채워주세요.', 'error');
+            }
+        });
+    }
+
+    /**
      * Toast System
      */
     function showToast(message, type = 'success') {

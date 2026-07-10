@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Higgsfield API Playground - 테스트베드</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Base Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Higgsfield Specific Stylesheet -->
+    <link rel="stylesheet" href="higgsfield.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="fa-solid fa-layer-group logo-icon"></i>
+                <h2>Higgsfield Play</h2>
+            </div>
+            
+            <nav class="steps-nav">
+                <ul class="higgsfield-sidebar-nav">
+                    <li class="nav-item active" id="nav-btn-playground">
+                        <span class="step-num"><i class="fa-solid fa-flask"></i></span>
+                        <span class="step-title">API Playground</span>
+                    </li>
+                    <li class="nav-item" id="nav-btn-gallery">
+                        <span class="step-num"><i class="fa-solid fa-photo-film"></i></span>
+                        <span class="step-title">결과 갤러리</span>
+                    </li>
+                    <li class="nav-item" id="nav-btn-docs">
+                        <span class="step-num"><i class="fa-solid fa-book"></i></span>
+                        <span class="step-title">API 명세 가이드</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="index.html" class="btn-secondary btn-block text-center" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;">
+                    <i class="fa-solid fa-arrow-left"></i> Prompt Studio로 이동
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-info">
+                    <div class="title-with-toggle">
+                        <h1>Higgsfield API Playground</h1>
+                        <div class="playground-status-badge">
+                            <span class="status-indicator online"></span>
+                            <span id="playground-mode-label">Mock Simulation Mode</span>
+                        </div>
+                    </div>
+                    <p>Higgsfield AI API를 활용하여 텍스트/이미지를 고품질 이미지 및 비디오로 생성하는 테스트 페이지입니다.</p>
+                </div>
+                <button id="btn-theme-toggle" class="btn-theme-toggle" title="화면 테마 변경">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </header>
+
+            <div class="workspace-content">
+                <!-- Tab: Playground -->
+                <div id="tab-playground" class="tab-content active">
+                    <div class="playground-layout">
+                        <!-- Left Panel: Configurations -->
+                        <div class="playground-left-panel">
+                            <!-- Section: Credentials & Settings -->
+                            <div class="playground-card credentials-card">
+                                <div class="card-header">
+                                    <h3><i class="fa-solid fa-key"></i> API 연결 설정</h3>
+                                    <button class="btn-collapse" id="btn-collapse-credentials"><i class="fa-solid fa-chevron-up"></i></button>
+                                </div>
+                                <div class="card-body" id="credentials-body">
+                                    <div class="form-group-row">
+                                        <div class="form-group flex-1">
+                                            <label>실행 모드</label>
+                                            <div class="toggle-buttons-group">
+                                                <button type="button" class="btn-toggle active" id="btn-mode-mock">시뮬레이션 (Mock)</button>
+                                                <button type="button" class="btn-toggle" id="btn-mode-real">실제 API 연동</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="real-api-fields" style="display: none;">
+                                        <div class="form-group">
+                                            <label for="hf-key-id">Key ID <span class="required">*</span></label>
+                                            <input type="password" id="hf-key-id" class="form-control" placeholder="KEY_ID를 입력하세요 (localStorage에 안전히 저장)">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="hf-key-secret">Key Secret <span class="required">*</span></label>
+                                            <input type="password" id="hf-key-secret" class="form-control" placeholder="KEY_SECRET을 입력하세요">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="hf-proxy-url">CORS 프록시 URL (선택)</label>
+                                            <input type="text" id="hf-proxy-url" class="form-control" placeholder="예: https://cors-anywhere.herokuapp.com/ (CORS 우회용)">
+                                            <small class="form-hint">브라우저에서 직접 API 호출 시 CORS 에러 방지를 위해 필요한 경우 기입하세요.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section: Inputs -->
+                            <div class="playground-card inputs-card">
+                                <div class="card-header">
+                                    <h3><i class="fa-solid fa-sliders"></i> 생성 파라미터</h3>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Generation Type Selection -->
+                                    <div class="form-group">
+                                        <label>작업 유형 (Task Type)</label>
+                                        <div class="task-selector-grid">
+                                            <button type="button" class="btn-task active" data-task="text-to-image">
+                                                <i class="fa-solid fa-image"></i>
+                                                <span>Text-to-Image</span>
+                                            </button>
+                                            <button type="button" class="btn-task" data-task="text-to-video">
+                                                <i class="fa-solid fa-video"></i>
+                                                <span>Text-to-Video</span>
+                                            </button>
+                                            <button type="button" class="btn-task" data-task="image-to-video">
+                                                <i class="fa-solid fa-play"></i>
+                                                <span>Image-to-Video</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                     <!-- Model Selector -->
+                                     <div class="form-group">
+                                         <label for="hf-model-select">모델 선택 (Model ID)</label>
+                                         <div style="display: flex; gap: 8px; align-items: center;">
+                                             <select id="hf-model-select" class="form-control" style="flex: 1; min-width: 0;">
+                                                 <!-- Dynamically populated based on task -->
+                                             </select>
+                                             <input type="text" id="hf-model-custom" class="form-control" style="display: none; flex: 1; min-width: 0;" placeholder="커스텀 모델 ID 직접 입력">
+                                             <button type="button" id="btn-toggle-model-input" class="btn-secondary" style="padding: 10px 16px; font-size: 0.82rem; border-radius: 8px; flex-shrink: 0; white-space: nowrap; min-width: 96px; height: 42px;">
+                                                 <i class="fa-solid fa-pen"></i> 직접 입력
+                                             </button>
+                                         </div>
+                                     </div>
+
+                                    <!-- Prompt Area -->
+                                    <div class="form-group">
+                                        <div class="label-with-action">
+                                            <label for="hf-prompt">생성 프롬프트 (Prompt) <span class="required">*</span></label>
+                                            <button type="button" id="btn-load-recent" class="btn-text-action" style="display:none;">
+                                                <i class="fa-solid fa-download"></i> 프롬프트 스튜디오에서 가져오기
+                                            </button>
+                                        </div>
+                                        <textarea id="hf-prompt" class="form-control" rows="4" placeholder="생성하고 싶은 이미지 또는 비디오에 대한 묘사를 영어로 입력하세요."></textarea>
+                                        <div class="prompt-suggestions">
+                                            <span class="suggestion-tag">Cinematic</span>
+                                            <span class="suggestion-tag">8K Ultra</span>
+                                            <span class="suggestion-tag">Detailed</span>
+                                            <span class="suggestion-tag">Slow Motion</span>
+                                            <span class="suggestion-tag">Photoreal</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Image to Video Input (Hidden initially) -->
+                                    <div class="form-group" id="image-input-container" style="display: none;">
+                                        <label>소스 이미지 (Source Image) <span class="required">*</span></label>
+                                        <div class="image-uploader-area" id="image-uploader">
+                                            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                                            <p>이미지를 업로드하거나 드래그 앤 드롭 하세요</p>
+                                            <span class="upload-hint">또는 이미지 URL을 입력하세요:</span>
+                                            <input type="text" id="hf-image-url" class="form-control" placeholder="https://example.com/image.jpg">
+                                            <input type="file" id="hf-image-file" accept="image/*" style="display: none;">
+                                        </div>
+                                        <div id="image-preview-box" class="image-preview-box" style="display: none;">
+                                            <img id="image-preview" src="" alt="Source preview">
+                                            <button type="button" id="btn-remove-image" class="btn-small-danger"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Advanced Parameter Toggles -->
+                                    <div class="parameters-grid">
+                                        <div class="form-group">
+                                            <label for="hf-aspect-ratio">화면 비율 (Aspect Ratio)</label>
+                                            <select id="hf-aspect-ratio" class="form-control">
+                                                <option value="1:1">1:1 (Square)</option>
+                                                <option value="16:9" selected>16:9 (Landscape)</option>
+                                                <option value="9:16">9:16 (Vertical)</option>
+                                                <option value="4:3">4:3 (Classic)</option>
+                                                <option value="2:3">2:3 (Portrait)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group video-only-param" style="display: none;">
+                                            <label for="hf-duration">재생 시간 (Duration)</label>
+                                            <select id="hf-duration" class="form-control">
+                                                <option value="4" selected>4 Seconds</option>
+                                                <option value="8">8 Seconds</option>
+                                                <option value="12">12 Seconds</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group video-only-param" style="display: none;">
+                                            <label for="hf-motion-strength">모션 강도 (Motion)</label>
+                                            <input type="range" id="hf-motion-strength" min="1" max="10" value="5" class="slider-control">
+                                            <span class="slider-val" id="motion-val">5</span>
+                                        </div>
+                                        <div class="form-group image-only-param">
+                                            <label for="hf-safety">안전 필터 레벨 (Safety)</label>
+                                            <select id="hf-safety" class="form-control">
+                                                <option value="1">1 (Strict)</option>
+                                                <option value="2" selected>2 (Standard)</option>
+                                                <option value="3">3 (Relaxed)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="hf-seed">시드값 (Seed)</label>
+                                            <input type="number" id="hf-seed" class="form-control" placeholder="무작위 (랜덤)" min="-1" step="1">
+                                        </div>
+                                    </div>
+
+                                    <button type="button" id="btn-generate" class="btn-primary btn-block btn-lg" style="margin-top: 15px;">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> 생성 요청 시작
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Live Logs, Monitor & Output -->
+                        <div class="playground-right-panel">
+                            <!-- Active Request Monitoring Card -->
+                            <div class="playground-card monitor-card">
+                                <div class="card-header">
+                                    <h3><i class="fa-solid fa-desktop"></i> 실시간 API 모니터</h3>
+                                    <div class="generation-controls">
+                                        <span id="monitor-badge" class="badge-status idle">IDLE</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div id="generation-placeholder" class="generation-placeholder">
+                                        <i class="fa-solid fa-hourglass-empty placeholder-icon"></i>
+                                        <p>좌측에서 매개변수를 설정하고 '생성 요청 시작' 버튼을 누르시면, 실시간 API 진행 상황 및 요청 로그가 이곳에 기록됩니다.</p>
+                                    </div>
+
+                                    <div id="generation-monitor-content" class="generation-monitor-content" style="display: none;">
+                                        <!-- Progress Details -->
+                                        <div class="progress-section">
+                                            <div class="progress-details">
+                                                <span class="progress-status-text" id="monitor-status-text">대기열 등록 중...</span>
+                                                <span class="progress-percentage-text" id="monitor-percentage-text">0%</span>
+                                            </div>
+                                            <div class="progress-bar-container">
+                                                <div class="progress-bar-fill" id="monitor-progress-bar"></div>
+                                            </div>
+                                            <div class="progress-meta" id="monitor-meta-info">
+                                                <span>Request ID: <strong id="monitor-request-id">-</strong></span>
+                                                <span>Time Elapsed: <strong id="monitor-time-elapsed">0.0s</strong></span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Live Server Logs Console -->
+                                        <div class="console-section">
+                                            <div class="console-header">
+                                                <span><i class="fa-solid fa-terminal"></i> API Console Logs</span>
+                                                <button type="button" id="btn-clear-logs" class="btn-console-action" title="로그 지우기"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                            <div class="console-logs" id="console-logs-container">
+                                                <!-- Appended dynamically -->
+                                            </div>
+                                        </div>
+
+                                        <!-- Collapsible Request/Response Inspector -->
+                                        <div class="inspector-section">
+                                            <div class="inspector-header" id="inspector-toggle-req">
+                                                <span><i class="fa-solid fa-code"></i> Request JSON Body</span>
+                                                <i class="fa-solid fa-chevron-down"></i>
+                                            </div>
+                                            <pre class="inspector-json" id="inspector-req-json" style="display: none;"></pre>
+
+                                            <div class="inspector-header" id="inspector-toggle-res">
+                                                <span><i class="fa-solid fa-code"></i> Response JSON Payload</span>
+                                                <i class="fa-solid fa-chevron-down"></i>
+                                            </div>
+                                            <pre class="inspector-json" id="inspector-res-json" style="display: none;"></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Generation Output Preview -->
+                            <div class="playground-card result-preview-card">
+                                <div class="card-header">
+                                    <h3><i class="fa-solid fa-circle-check"></i> 생성 완료 미디어</h3>
+                                    <button type="button" id="btn-save-gallery" class="btn-small-secondary" style="display: none;">
+                                        <i class="fa-solid fa-bookmark"></i> 갤러리에 저장
+                                    </button>
+                                </div>
+                                <div class="card-body result-preview-body">
+                                    <div id="result-placeholder" class="result-placeholder">
+                                        <i class="fa-solid fa-circle-question placeholder-icon"></i>
+                                        <p>생성이 완료되면 미디어 결과물이 이곳에 표시됩니다.</p>
+                                    </div>
+                                    <div id="result-display" class="result-display" style="display: none;">
+                                        <!-- Will hold <video> or <img> dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Gallery -->
+                <div id="tab-gallery" class="tab-content">
+                    <div class="gallery-toolbar">
+                        <div class="gallery-filters">
+                            <button type="button" class="btn-filter active" data-filter="all">전체</button>
+                            <button type="button" class="btn-filter" data-filter="image">이미지</button>
+                            <button type="button" class="btn-filter" data-filter="video">비디오</button>
+                        </div>
+                        <button type="button" id="btn-clear-gallery" class="btn-danger btn-small">
+                            <i class="fa-solid fa-trash-can"></i> 전체 내역 삭제
+                        </button>
+                    </div>
+
+                    <div class="gallery-grid" id="gallery-grid-container">
+                        <!-- Gallery items will be injected here -->
+                    </div>
+                    
+                    <div id="gallery-empty-state" class="gallery-empty-state">
+                        <i class="fa-solid fa-images placeholder-icon"></i>
+                        <p>저장된 생성 결과가 없습니다. Playground 탭에서 이미지를 생성하고 결과물을 저장해보세요!</p>
+                    </div>
+                </div>
+
+                <!-- Tab: API Docs Guide -->
+                <div id="tab-docs" class="tab-content">
+                    <div class="docs-container">
+                        <div class="docs-card">
+                            <h2>Higgsfield v2 Client API 가이드</h2>
+                            <p>이 문서는 애플리케이션 백엔드(Node.js/TypeScript)에서 Higgsfield SDK를 사용하여 이미지 및 비디오 생성을 통합할 때 필요한 표준 방법과 코드를 안내합니다.</p>
+
+                            <div class="alert alert-info">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <strong>보안 유의사항:</strong> Higgsfield v2 클라이언트는 브라우저 환경에서 직접 실행하는 것을 보안 상 금지하고 있습니다. API 호출은 서버측(Node.js, Express, Next.js 등)에서 수행해야 합니다.
+                            </div>
+
+                            <h3>1. 설치 (Installation)</h3>
+                            <pre class="code-block"><code>npm install @higgsfield/client</code></pre>
+
+                            <h3>2. 클라이언트 초기화 및 설정 (Configuration)</h3>
+                            <p>인증 키(Key ID:Secret)를 사용하여 클라이언트를 설정합니다. 환경변수 <code>HF_CREDENTIALS</code>로 자동 주입할 수도 있습니다.</p>
+                            <pre class="code-block"><code>import { config, higgsfield } from '@higgsfield/client/v2';
+
+// 1. 명시적 인증 키 주입
+config({ credentials: 'YOUR_KEY_ID:YOUR_KEY_SECRET' });
+
+// 또는 2. 인스턴스 직접 생성
+import { createHiggsfieldClient } from '@higgsfield/client/v2';
+const client = createHiggsfieldClient({
+  credentials: 'YOUR_KEY_ID:YOUR_KEY_SECRET',
+  baseURL: 'https://platform.higgsfield.ai'
+});</code></pre>
+
+                            <h3>3. Text-to-Image 생성 요청 (Subscribe)</h3>
+                            <p>이미지 생성 태스크는 <code>subscribe()</code> 메소드에 모델 ID와 입력을 전달하여 실행하고, <code>withPolling: true</code>를 설정해 상태를 추적할 수 있습니다.</p>
+                            <pre class="code-block"><code>const jobSet = await higgsfield.subscribe('flux_2/pro', {
+  input: {
+    prompt: 'A beautiful retro neon cityscape with flying cars, cyber punk, 8k',
+    aspect_ratio: '16:9',
+    safety_tolerance: 2,
+    seed: 42
+  },
+  withPolling: true
+});
+
+if (jobSet.isCompleted) {
+  const imageUrl = jobSet.jobs[0].results?.raw.url;
+  console.log('생성 완료 이미지 URL:', imageUrl);
+}</code></pre>
+
+                            <h3>4. Text-to-Video / Image-to-Video 생성</h3>
+                            <p>비디오 생성 태스크 또한 동일한 패턴을 따르며, 비디오 모델 ID와 모션 파라미터를 추가로 제공합니다.</p>
+                            <pre class="code-block"><code>// Text-to-Video 예시
+const videoJob = await higgsfield.subscribe('veo-3-1-preview', {
+  input: {
+    prompt: 'Cinematic tracking shot of a white sports car driving down a coastal highway',
+    aspect_ratio: '16:9',
+    duration: 4, // 초 단위
+    motion_strength: 7 // 1~10
+  },
+  withPolling: true
+});
+
+// Image-to-Video 예시 (기존 이미지를 소스로 활용)
+const img2VideoJob = await higgsfield.subscribe('kling_omni_image', {
+  input: {
+    prompt: 'Gentle waves lapping on the sand, sunbeams dancing on water',
+    image: 'https://example.com/source-ocean.jpg',
+    aspect_ratio: '16:9',
+    duration: 8,
+    motion_strength: 5
+  },
+  withPolling: true
+});</code></pre>
+
+                            <h3>5. API 상태 코드 일람 (Status Lifecycle)</h3>
+                            <table class="docs-table">
+                                <thead>
+                                    <tr>
+                                        <th>상태명 (Status)</th>
+                                        <th>설명</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>queued</code></td>
+                                        <td>생성 대기열에 등록된 상태로, GPU 연동을 대기 중입니다.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>in_progress</code></td>
+                                        <td>모델 가중치를 불러오고, 노이즈 제거 단계를 거쳐 실제 프레임을 생성 중입니다.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>completed</code></td>
+                                        <td>생성이 안전하게 완료되어 결과물 미디어 다운로드 URL이 반환된 상태입니다.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>nsfw</code></td>
+                                        <td>콘텐츠 안전성 가이드라인을 위배하여 거절되었습니다. (소모 크레딧은 전액 환불됩니다)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>failed</code></td>
+                                        <td>시스템 또는 렌더링 에러가 발생했습니다. (소모 크레딧은 환불됩니다)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="higgsfield.js"></script>
+</body>
+</html>
