@@ -904,6 +904,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show active card
         if (currentStep === totalSteps) {
+            if (dynamicFormContainer) dynamicFormContainer.style.display = 'none';
             if (finalCard) finalCard.classList.add('active');
             
             // Set final badge step dynamically
@@ -914,6 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             assembleFinalPrompt();
         } else {
+            if (dynamicFormContainer) dynamicFormContainer.style.display = 'block';
             const activeCard = document.getElementById(`step-card-${currentStep}`);
             if (activeCard) activeCard.classList.add('active');
             
