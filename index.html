@@ -3,216 +3,792 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Prompt Studio - 프롬프트 메이커</title>
+    <title>Prompt Studio - AI Video & Image Prompt Generator</title>
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Nanum+Gothic+Coding:wght@400;700&family=Noto+Serif+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Style CSS -->
     <link rel="stylesheet" href="style.css">
-    <script src="configs.js"></script>
-    <script src="presets.js"></script>
-</head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="logo-area">
-                <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
-                <h2>Prompt Studio</h2>
-            </div>
+    <style>
+        /* Base Reset & Layout specifically for landing */
+        html {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        html::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        body.landing-page {
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* Landing Background with elegant glow effects */
+        .landing-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: radial-gradient(circle at 75% 25%, rgba(124, 58, 237, 0.12) 0%, transparent 45%),
+                        radial-gradient(circle at 25% 75%, rgba(6, 182, 212, 0.08) 0%, transparent 45%);
+            transition: var(--transition-smooth);
+        }
+        body.landing-page.light-mode .landing-bg {
+            background: radial-gradient(circle at 75% 25%, rgba(124, 58, 237, 0.04) 0%, transparent 45%),
+                        radial-gradient(circle at 25% 75%, rgba(6, 182, 212, 0.03) 0%, transparent 45%);
+        }
+
+        /* Landing Header */
+        .landing-header {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 12px 20px 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .header-logo h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #ffffff, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        body.landing-page.light-mode .header-logo h1 {
+            background: linear-gradient(to right, #0f172a, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Splash Content Area */
+        .splash-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 5px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            gap: 12px;
+        }
+
+        .splash-container h2 {
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 0;
+            letter-spacing: -1px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #a78bfa 10%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        body.landing-page.light-mode .gradient-text {
+            background: linear-gradient(135deg, #7c3aed 10%, #0891b2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .splash-desc {
+            font-family: 'Noto Serif KR', 'NanumMyeongjo', 'Batang', serif;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            max-width: 850px;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* Modern Gradient Marker Highlighter Styles */
+        .highlight-cyan {
+            background: linear-gradient(to top, rgba(6, 182, 212, 0.45) 40%, transparent 40%);
+            color: var(--text-primary);
+            padding: 0 2px;
+            font-weight: 600;
+        }
+        .highlight-purple {
+            background: linear-gradient(to top, rgba(139, 92, 246, 0.45) 40%, transparent 40%);
+            color: var(--text-primary);
+            padding: 0 2px;
+            font-weight: 600;
+        }
+        body.light-mode .highlight-cyan {
+            background: linear-gradient(to top, rgba(6, 182, 212, 0.35) 40%, transparent 40%);
+        }
+        body.light-mode .highlight-purple {
+            background: linear-gradient(to top, rgba(139, 92, 246, 0.35) 40%, transparent 40%);
+        }
+
+        /* Access Button CTA */
+        .btn-enter-studio {
+            padding: 18px 50px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border-radius: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+            letter-spacing: -0.2px;
+            margin-bottom: 24px;
+        }
+        .btn-enter-studio:hover {
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.6);
+            transform: translateY(-2px);
+        }
+        .btn-enter-studio:active {
+            transform: translateY(0);
+        }
+
+        /* Explain Block Section */
+        .modes-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 15px 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: var(--glass-shadow);
+            margin-top: 0;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        body.landing-page.light-mode .modes-container {
+            background: rgba(255, 255, 255, 0.45);
+            border-color: rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
+        }
+
+        .modes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            width: 100%;
+            margin-top: 0;
+        }
+
+        .mode-card {
+            background-color: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 16px 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            text-align: left;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            opacity: 0.4;
+        }
+
+        .mode-card:not(.active):hover {
+            opacity: 0.7;
+            transform: translateY(-2px);
+        }
+
+        .mode-card.active {
+            opacity: 1 !important;
+            transform: translateY(0);
+        }
+
+        .mode-card.mode-video-card.active {
+            border-color: var(--color-secondary) !important;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3) !important;
+        }
+
+        .mode-card.mode-image-card.active {
+            border-color: var(--color-accent) !important;
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.3) !important;
+        }
+
+
+        body.landing-page.light-mode .mode-card {
+            background-color: rgba(255, 255, 255, 0.4);
+            border-color: rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            opacity: 0.5;
+        }
+
+        body.landing-page.light-mode .mode-card.mode-video-card.active {
+            border-color: var(--color-secondary-hover) !important;
+            opacity: 1;
+        }
+
+        body.landing-page.light-mode .mode-card.mode-image-card.active {
+            border-color: var(--color-accent) !important;
+            opacity: 1;
+        }
+
+
+        .mode-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-glass-focus);
+        }
+
+        .mode-card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .mode-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #ffffff;
+        }
+
+        .mode-video-card .mode-card-icon {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        }
+
+        .mode-image-card .mode-card-icon {
+            background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+        }
+
+        .mode-card-title h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .mode-card-title span {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .mode-card-body p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .mode-bullets {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 16px;
+        }
+
+        .mode-bullets li {
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.25;
+        }
+
+        .mode-bullets li i {
+            font-size: 0.85rem;
+        }
+
+        .mode-video-card .mode-bullets li i {
+            color: var(--color-secondary);
+        }
+
+        .mode-image-card .mode-bullets li i {
+            color: var(--color-accent);
+        }
+
+        /* Footer */
+        .landing-footer {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-glass);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-secondary);
+        }
+
+        /* Common Steps Flow Section */
+        .common-steps-section {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .steps-section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 0;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .steps-section-title i {
+            color: var(--color-primary);
+            font-size: 1.1rem;
+        }
+
+        .steps-flow-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 15px 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--glass-shadow);
+            position: relative;
+        }
+
+        .step-flow-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-flow-number {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            padding: 1px 6px;
+            border-radius: 20px;
+            margin-bottom: 6px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .step-flow-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(22, 27, 45, 0.8) 0%, rgba(35, 42, 69, 0.8) 100%);
+            border: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .step-flow-item:hover .step-flow-icon {
+            transform: translateY(-4px) scale(1.05);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            box-shadow: var(--neon-shadow);
+        }
+
+        .step-flow-item h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .step-flow-item p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.35;
+            text-align: center;
+            max-width: 170px;
+            word-break: keep-all;
+        }
+
+        .step-flow-arrow {
+            display: flex;
+            align-items: center;
+            align-self: center;
+            height: 40px;
+            margin-top: 14px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            animation: pulse-arrow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-arrow {
+            0%, 100% {
+                transform: translateX(0);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translateX(4px);
+                opacity: 1;
+            }
+        }
+
+        body.landing-page.light-mode .steps-flow-container {
+            background: rgba(255, 255, 255, 0.65);
+            border-color: rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        body.landing-page.light-mode .step-flow-icon {
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+            border-color: rgba(0, 0, 0, 0.08);
+            color: #374151;
+        }
+        
+        body.landing-page.light-mode .step-flow-item:hover .step-flow-icon {
+            border-color: var(--color-primary-hover);
+            color: var(--color-primary-hover);
+        }
+
+        /* Responsive Layouts */
+        @media (max-width: 768px) {
+            body.landing-page {
+                height: auto;
+                max-height: none;
+                overflow-y: auto;
+            }
+            .splash-container {
+                padding: 20px 20px;
+                gap: 20px;
+            }
+            .splash-container h2 {
+                font-size: 2.2rem;
+            }
+            .splash-desc {
+                font-size: 1rem;
+            }
+            .btn-enter-studio {
+                padding: 15px 30px;
+                font-size: 1rem;
+                margin-bottom: 40px;
+            }
+            .modes-container {
+                padding: 20px 15px;
+                border-radius: 20px;
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+            .modes-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .mode-bullets {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .landing-header {
+                padding: 20px;
+            }
+            .landing-footer {
+                flex-direction: column;
+                gap: 12px;
+                padding: 20px;
+                text-align: center;
+            }
             
-            <!-- Dynamic Sidebar Steps will be injected here -->
-            <nav class="steps-nav">
-                <ul id="dynamic-steps-nav">
-                    <!-- Injected by JS -->
-                </ul>
-            </nav>
+            /* Responsive Steps */
+            .steps-flow-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+                padding: 30px 20px;
+            }
+            .step-flow-arrow {
+                transform: rotate(90deg);
+                margin-top: 0;
+                margin-bottom: 5px;
+                height: auto;
+                animation: pulse-arrow-vertical 2s infinite ease-in-out;
+            }
+            .step-flow-item p {
+                max-width: 100%;
+            }
+        }
 
+        @keyframes pulse-arrow-vertical {
+            0%, 100% {
+                transform: rotate(90deg) translateX(0);
+                opacity: 0.5;
+            }
+            50% {
+                transform: rotate(90deg) translateX(4px);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="landing-page">
+    <div class="landing-bg"></div>
 
+    <!-- Header -->
+    <header class="landing-header">
+        <a href="index.html" class="header-logo">
+            <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
+            <h1>Prompt Studio</h1>
+        </a>
+        <div class="header-right">
+            <button id="btn-theme-toggle" class="btn-theme-toggle" title="화면 테마 변경">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+        </div>
+    </header>
 
-            <!-- Selected Artist Style Box -->
-            <div id="selected-artist-style-box" class="selected-artist-style-box" style="display: none;">
-                <div class="artist-style-header">
-                    <span><i class="fa-solid fa-palette"></i> <span id="artist-style-name">Wes Anderson</span></span>
-                    <button id="btn-clear-artist-style" title="선택 해제"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <img id="artist-style-img" class="artist-style-img" src="" alt="Artist Style Reference">
+    <!-- Splash Content Area -->
+    <main class="splash-container">
+        <h2>생각을 비주얼로 바꾸는<br><span class="gradient-text">AI 프롬프트 메이커</span></h2>
+        <p class="splash-desc">
+            비디오 및 이미지 생성 목적에 맞게 세분화된 단계별 가이드를 통해 <span class="highlight-cyan">고품질 프롬프트를 설계</span>합니다.<br> 기획부터 연출(카메라, 조명, 구도), 작가 화풍 매핑까지, 직관적인 UI 빌더로 <span class="highlight-purple">최종 프롬프트를 원클릭으로 빌드</span>하세요.
+        </p>
+        
+        <a href="studio.html" class="btn-enter-studio" style="margin-top: 30px; margin-bottom: 24px;">
+            프롬프트 스튜디오 시작 <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+        <!-- Pre-Process Section Header -->
+        <h3 class="steps-section-title" style="margin-bottom: 3px;">
+            <i class="fa-solid fa-circle-nodes"></i> 프롬프트 빌더 사전 프로세스
+        </h3>
+
+        <!-- Modes Explanation Container (Rounded Box) -->
+        <div class="modes-container">
+            <!-- Step 00 Header & Explanation -->
+            <div class="step-zero-section" style="margin-top: 0; margin-bottom: 14px; text-align: center; width: 100%;">
+                <span class="step-flow-number" style="display: inline-block; margin-bottom: 4px;">Step 00</span>
+                <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0; font-family: var(--font-main);">아래 비디오/이미지 블록을 클릭하여 원하는 빌더의 제작 방식을 먼저 선택하세요.</p>
             </div>
 
-            <!-- Content Production Related Sites -->
-            <div class="sites-section">
-                <h4>
-                    <i class="fa-solid fa-video"></i> 콘텐츠 제작관련 사이트
-                </h4>
-                <ul>
-                    <li>
-                        <a href="https://higgsfield.ai/" target="_blank">
-                            <span>higgsfield</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://labs.google/fx/ko/tools/flow" target="_blank">
-                            <span>Google Flow</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://www.meigen.ai/" target="_blank">
-                            <span>MeoGen Gallery</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://aicameramovements.com/" target="_blank">
-                            <span>AI Camera Movement</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://vrew.ai/ko/" target="_blank">
-                            <span>Vrew</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
-                    </li>
-                </ul>
+            <div class="modes-grid">
+                <!-- Video Mode Card -->
+                <div class="mode-card mode-video-card active">
+                    <div class="mode-card-header">
+                        <div class="mode-card-icon">
+                            <i class="fa-solid fa-video"></i>
+                        </div>
+                        <div class="mode-card-title">
+                            <h4>비디오 생성 모드</h4>
+                            <span>Dynamic Video Maker</span>
+                        </div>
+                    </div>
+                    <div class="mode-card-body">
+                        <p>광고, 시네마틱 영화, 소셜 브이로그 등 역동적인 비디오 제작에 특화된 연출 설계와 타임라인 구성을 지원합니다.</p>
+                        <ul class="mode-bullets">
+                            <li><i class="fa-solid fa-circle-check"></i> <b>10단계 체계적 완성</b></li>
+                            <li><i class="fa-solid fa-circle-check"></i> <b>동적 타임라인 빌더</b></li>
+                            <li><i class="fa-solid fa-circle-check"></i> <b>전문 카메라 무브먼트</b></li>
+                            <li><i class="fa-solid fa-circle-check"></i> <b>오디오 및 배경음 요소</b></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Image Mode Card -->
+                <div class="mode-card mode-image-card">
+                    <div class="mode-card-header">
+                        <div class="mode-card-icon">
+                            <i class="fa-solid fa-image"></i>
+                        </div>
+                        <div class="mode-card-title">
+                            <h4>이미지 생성 모드</h4>
+                            <span>High-Quality Image Maker</span>
+                        </div>
+                    </div>
+                    <div class="mode-card-body">
+                        <p>소셜 썸네일, 브랜드 포스터, 제품 그래픽 등 정적인 디자인의 레이아웃과 고유 작가 스타일을 정교하게 매핑합니다.</p>
+                        <ul class="mode-bullets">
+                            <li><i class="fa-solid fa-circle-check"></i> <b>8단계 정밀 완성</b></li>
+                            <li><i class="fa-solid fa-circle-check"></i> <b>20인의 거장 작가 스타일 DB</b></li>
+                            <li><i class="fa-solid fa-circle-check"></i> <b>디자인 레이아웃 제어</b></li>
+                            <li><i class="fa-solid fa-circle-check"></i> <b>라이팅 및 표면 질감</b></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Common Steps Flow Section -->
+        <section class="common-steps-section">
+            <h3 class="steps-section-title"><i class="fa-solid fa-route"></i> 프롬프트 빌더 공통 프로세스</h3>
+            <div class="steps-flow-container">
+                <div class="step-flow-item">
+                    <div class="step-flow-number">Step 01</div>
+                    <div class="step-flow-icon"><i class="fa-solid fa-sliders"></i></div>
+                    <h4>모드 &amp; 프리셋 설정</h4>
+                    <p>결과물 형식(비디오/이미지)을 결정하고, 완성형 프리셋과 작가 스타일을 매핑합니다.</p>
+                </div>
+                
+                <div class="step-flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                
+                <div class="step-flow-item">
+                    <div class="step-flow-number">Step 02</div>
+                    <div class="step-flow-icon"><i class="fa-solid fa-cubes"></i></div>
+                    <h4>세부 연출 기획</h4>
+                    <p>인물의 디테일(헤어, 메이크업 등), 의상 스타일, 제품 특징과 공간 배경을 설정합니다.</p>
+                </div>
+                
+                <div class="step-flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                
+                <div class="step-flow-item">
+                    <div class="step-flow-number">Step 03</div>
+                    <div class="step-flow-icon"><i class="fa-solid fa-camera"></i></div>
+                    <h4>카메라 &amp; 무브먼트</h4>
+                    <p>렌즈 초점거리, 구도, 카메라 동적 무브먼트 및 세부 오디오/타임라인 요소를 구성합니다.</p>
+                </div>
+                
+                <div class="step-flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                
+                <div class="step-flow-item">
+                    <div class="step-flow-number">Step 04</div>
+                    <div class="step-flow-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <h4>실시간 조립 &amp; 완성</h4>
+                    <p>입력에 맞춰 실시간으로 조합 및 번역된 고품질 프롬프트를 확인하고 원클릭 복사합니다.</p>
+                </div>
             </div>
 
-            <div class="sidebar-footer">
-                <div class="hashtag-container">
-                    <span class="hash-tag">#Synopsis</span>
-                    <span class="hash-tag">#Outline</span>
-                    <span class="hash-tag">#Script</span>
-                    <span class="hash-tag">#Storyboard</span>
-                    <span class="hash-tag">#Shot List</span>
-                </div>
-                <button id="btn-fill-all" class="btn-secondary">
-                    <i class="fa-solid fa-bolt"></i> 예시 전체 채우기
-                </button>
-            </div>
-        </aside>
+        </section>
+    </main>
 
-        <!-- Main Workspace -->
-        <main class="workspace">
-            <header class="main-header">
-                <div class="header-info">
-                    <div class="title-with-toggle">
-                        <h1 id="app-title">AI Video Prompt Generator</h1>
-                        <div class="mode-toggle-group">
-                            <button id="mode-video" class="btn-mode active" data-mode="video">
-                                <i class="fa-solid fa-video"></i> 비디오
-                            </button>
-                            <button id="mode-image" class="btn-mode" data-mode="image">
-                                <i class="fa-solid fa-image"></i> 이미지
-                            </button>
-                        </div>
-                    </div>
-                    <p id="app-subtitle">영상의 목적에 맞게 단계별 세부 요소를 입력하여 고품질 AI 영상 프롬프트를 완성하세요.</p>
-                </div>
-                <button id="btn-theme-toggle" class="btn-theme-toggle" title="화면 테마 변경">
-                    <i class="fa-solid fa-moon"></i>
-                </button>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
-            </header>
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <p>&copy; 2026 Prompt Studio. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="README.md" target="_blank">도움말</a>
+        </div>
+    </footer>
 
-            <div class="workspace-content">
-                <!-- Form Area -->
-                <section class="form-section">
-                    
+    <!-- Theme Toggle and Init Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnThemeToggle = document.getElementById('btn-theme-toggle');
+            
+            // Sync theme from localStorage
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                if (btnThemeToggle) {
+                    btnThemeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                }
+            } else {
+                document.body.classList.remove('light-mode');
+                if (btnThemeToggle) {
+                    btnThemeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+                }
+            }
 
-                    <!-- Purpose Selector Bar -->
-                    <div id="purpose-selector-container" class="purpose-selector-container">
-                        <!-- Dynamic Purpose Cards Grid will be injected here by JS -->
-                    </div>
-                    <!-- Preset Selector Bar -->
-                    <div id="preset-selector-container" class="preset-selector-container">
-                        <label for="preset-select"><i class="fa-solid fa-wand-magic-sparkles"></i> 프리셋 불러오기:</label>
-                        <select id="preset-select" class="form-control preset-select">
-                            <option value="">-- 프리셋을 선택하여 폼을 자동으로 채우기 --</option>
-                        </select>
-                    </div>
+            // Theme Toggle Click Handler
+            if (btnThemeToggle) {
+                btnThemeToggle.addEventListener('click', () => {
+                    const isLightMode = document.body.classList.toggle('light-mode');
+                    if (isLightMode) {
+                        localStorage.setItem('theme', 'light');
+                        btnThemeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                    } else {
+                        localStorage.setItem('theme', 'dark');
+                        btnThemeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+                    }
+                });
+            }
 
-                    <!-- Artist Style Selector Bar -->
-                    <div id="artist-style-selector-container" class="preset-selector-container" style="margin-top: 10px;">
-                        <label for="artist-style-select"><i class="fa-solid fa-palette"></i> 작가스타일 레퍼런스:</label>
-                        <select id="artist-style-select" class="form-control preset-select">
-                            <option value="">-- 작가스타일을 선택하여 스타일 관련 필드에 적용 --</option>
-                        </select>
-                    </div>
+            // Mode Toggle Switcher Handler via clicking Cards
+            const modeCards = document.querySelectorAll('.mode-card');
+            const mainStartBtn = document.querySelector('.btn-enter-studio');
 
+            // Set initial state
+            if (mainStartBtn) {
+                mainStartBtn.setAttribute('href', 'studio.html?mode=video');
+            }
 
-                    <!-- Dynamic Form Cards Container -->
-                    <div id="dynamic-form-container">
-                        <!-- Step Cards (1 to 9) will be injected dynamically by JS -->
-                    </div>
+            modeCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    modeCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
 
-                    <!-- Step 10 Card (Assemble & Copy) - Always Common -->
-                    <div class="step-card" id="step-card-final">
-                        <div class="card-header">
-                            <span class="badge" id="final-badge">Step 10</span>
-                            <h2>최종 조립 및 출력</h2>
-                            <p>선택된 목적의 조립 구조를 바탕으로 완성된 최종 프롬프트입니다.</p>
-                        </div>
-                        <div class="card-body">
-                            <div class="output-options">
-                                <button id="btn-copy-prompt" class="btn-primary btn-block">
-                                    <i class="fa-solid fa-copy"></i> 프롬프트 복사하기
-                                </button>
-                                <button id="btn-reset" class="btn-danger btn-block">
-                                    <i class="fa-solid fa-rotate-left"></i> 초기화
-                                </button>
-                            </div>
-                            <div class="output-preview-container">
-                                <textarea id="final-output-textarea" readonly class="form-control final-output-area"></textarea>
-                                <a href="https://translate.google.co.kr/?sl=ko&tl=en&op=translate" target="_blank" id="btn-google-translate" class="btn-secondary btn-block" style="margin-top: 15px; text-decoration: none;">
-                                    <i class="fa-solid fa-language"></i> 구글 번역하러 가기
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    const isVideo = card.classList.contains('mode-video-card');
+                    const currentMode = isVideo ? 'video' : 'image';
 
-                    <!-- Navigation Footer -->
-                    <div class="nav-footer">
-                        <button id="btn-prev" class="btn-nav btn-secondary" disabled>
-                            <i class="fa-solid fa-chevron-left"></i> 이전
-                        </button>
-                        <div class="step-indicator">
-                            <span id="current-step-indicator">1</span> / <span id="total-steps-indicator">10</span>
-                        </div>
-                        <button id="btn-next" class="btn-nav btn-primary">
-                            다음 <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </section>
-
-                <!-- Live Preview Area -->
-                <section class="preview-section">
-                    <div class="preview-card">
-                        <div class="preview-header">
-                            <h3><i class="fa-solid fa-eye"></i> 실시간 프롬프트 프리뷰</h3>
-                            <button id="btn-load-current-example" class="btn-small-secondary">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> 현재 단계 예시 채우기
-                            </button>
-                        </div>
-                        <div class="preview-body" id="prompt-preview-content">
-                            <!-- JS will inject formatted preview text here -->
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </main>
-    </div>
-
-    <!-- Notification Container for Toast Messages -->
-    <div id="toast-container"></div>
-
-    <script src="app.js"></script>
+                    if (mainStartBtn) {
+                        mainStartBtn.setAttribute('href', `studio.html?mode=${currentMode}`);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

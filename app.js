@@ -1,16 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Application State ---
-    let selectedMode = 'video'; // 'video' or 'image'
-    let selectedPurpose = 'product'; // 'product', 'cinematic', 'vlog' / 'thumbnail_poster', 'sns_marketing', 'brand_keyvisual'
+    const urlParams = new URLSearchParams(window.location.search);
+    let selectedMode = urlParams.get('mode') === 'image' ? 'image' : 'video'; // 'video' or 'image'
+    let selectedPurpose = selectedMode === 'video' ? 'product' : 'thumbnail_poster';
     let currentStep = 1;
-    let totalSteps = 10; // 10 for video, 8 for image
+    let totalSteps = selectedMode === 'video' ? 10 : 8; // 10 for video, 8 for image
 
     let videoFormData = {};
     let imageFormData = {};
-    let formData = videoFormData; // Reference pointing to active mode's form data
+    let formData = selectedMode === 'video' ? videoFormData : imageFormData; // Reference pointing to active mode's form data
 
     // Configurations loaded from configs.js
-    let currentConfigs = window.purposeConfigs;
+    let currentConfigs = selectedMode === 'video' ? window.purposeConfigs : window.imageConfigs;
 
     // Elements DOM References
     const dynamicStepsNav = document.getElementById('dynamic-steps-nav');
@@ -1616,6 +1617,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     // --- First Application Boot ---
+    // Sync button classes and text based on selectedMode
+    if (selectedMode === 'video') {
+        if (btnModeVideo) btnModeVideo.classList.add('active');
+        if (btnModeImage) btnModeImage.classList.remove('active');
+        if (appTitle) appTitle.textContent = 'AI Video Prompt Generator';
+        if (appSubtitle) appSubtitle.textContent = '영상의 목적에 맞게 단계별 세부 요소를 입력하여 고품질 AI 영상 프롬프트를 완성하세요.';
+    } else {
+        if (btnModeVideo) btnModeVideo.classList.remove('active');
+        if (btnModeImage) btnModeImage.classList.add('active');
+        if (appTitle) appTitle.textContent = 'AI Image Prompt Generator';
+        if (appSubtitle) appSubtitle.textContent = '이미지의 목적에 맞게 단계별 세부 요소를 입력하여 고품질 AI 이미지 프롬프트를 완성하세요.';
+    }
+
     // Pre-initialize empty values
     const initialConfig = currentConfigs[selectedPurpose];
     Object.keys(initialConfig.fields).forEach(id => {
