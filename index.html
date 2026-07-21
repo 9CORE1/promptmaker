@@ -619,110 +619,100 @@
             비디오 및 이미지 생성 목적에 맞게 세분화된 단계별 가이드를 통해 <span class="highlight-cyan">고품질 프롬프트를 설계</span>합니다.<br> 기획부터 연출(카메라, 조명, 구도), 작가 화풍 매핑까지, 직관적인 UI 빌더로 <span class="highlight-purple">최종 프롬프트를 원클릭으로 빌드</span>하세요.
         </p>
         
-        <a href="studio.html" class="btn-enter-studio" style="margin-top: 30px; margin-bottom: 24px;">
-            프롬프트 스튜디오 시작 <i class="fa-solid fa-arrow-right"></i>
-        </a>
-
-        <!-- Pre-Process Section Header -->
-        <h3 class="steps-section-title" style="margin-bottom: 3px;">
-            <i class="fa-solid fa-circle-nodes"></i> 프롬프트 빌더 사전 프로세스
-        </h3>
-
-        <!-- Modes Explanation Container (Rounded Box) -->
-        <div class="modes-container">
-            <!-- Step 00 Header & Explanation -->
-            <div class="step-zero-section" style="margin-top: 0; margin-bottom: 14px; text-align: center; width: 100%;">
-                <span class="step-flow-number" style="display: inline-block; margin-bottom: 4px;">Step 00</span>
-                <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0; font-family: var(--font-main);">아래 비디오/이미지 블록을 클릭하여 원하는 빌더의 제작 방식을 먼저 선택하세요.</p>
-            </div>
-
-            <div class="modes-grid">
-                <!-- Video Mode Card -->
-                <div class="mode-card mode-video-card active">
-                    <div class="mode-card-header">
-                        <div class="mode-card-icon">
-                            <i class="fa-solid fa-video"></i>
-                        </div>
-                        <div class="mode-card-title">
-                            <h4>비디오 생성 모드</h4>
-                            <span>Dynamic Video Maker</span>
-                        </div>
+        <!-- Dual Mode Selection Entrance Section -->
+        <section class="dual-mode-section" style="width: 100%; max-width: 900px; margin: 24px 0 30px 0;">
+            <h3 class="steps-section-title" style="margin-bottom: 14px;">
+                <i class="fa-solid fa-sliders"></i> 프롬프트 작업 모드 선택
+            </h3>
+            
+            <div class="dual-mode-grid">
+                <!-- Fast Lite Mode Card -->
+                <div class="dual-mode-card mode-lite-card">
+                    <div class="dual-card-header">
+                        <span class="dual-badge lite-badge"><i class="fa-solid fa-bolt"></i> Fast Lite</span>
+                        <h4>빠른 아이디어 3~4단계</h4>
                     </div>
-                    <div class="mode-card-body">
-                        <p>광고, 시네마틱 영화, 소셜 브이로그 등 역동적인 비디오 제작에 특화된 연출 설계와 타임라인 구성을 지원합니다.</p>
-                        <ul class="mode-bullets">
-                            <li><i class="fa-solid fa-circle-check"></i> <b>10단계 체계적 완성</b></li>
-                            <li><i class="fa-solid fa-circle-check"></i> <b>동적 타임라인 빌더</b></li>
-                            <li><i class="fa-solid fa-circle-check"></i> <b>전문 카메라 무브먼트</b></li>
-                            <li><i class="fa-solid fa-circle-check"></i> <b>오디오 및 배경음 요소</b></li>
-                        </ul>
-                    </div>
+                    <p class="dual-card-desc">핵심 3~4단계 구성으로 빠른 아이디어화 및 초스피드 프롬프트 생성을 지원합니다.</p>
+                    <ul class="mode-bullets" style="margin-bottom: 20px;">
+                        <li><i class="fa-solid fa-circle-check"></i> 비디오 4단계 / 이미지 3단계</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 초스피드 1-클릭 빌드</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 핵심 키워드 빠른 조합</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 입문자 &amp; 직관적 UI</li>
+                    </ul>
+                    <a href="studio.html?genMode=lite" class="btn-dual-enter btn-lite-enter" data-gen-mode="lite">
+                        ⚡ Fast Lite 시작 <i class="fa-solid fa-arrow-right"></i>
+                    </a>
                 </div>
 
-                <!-- Image Mode Card -->
-                <div class="mode-card mode-image-card">
-                    <div class="mode-card-header">
-                        <div class="mode-card-icon">
-                            <i class="fa-solid fa-image"></i>
-                        </div>
-                        <div class="mode-card-title">
-                            <h4>이미지 생성 모드</h4>
-                            <span>High-Quality Image Maker</span>
-                        </div>
+                <!-- Pro Expert Mode Card -->
+                <div class="dual-mode-card mode-pro-card">
+                    <div class="dual-card-header">
+                        <span class="dual-badge pro-badge"><i class="fa-solid fa-clapperboard"></i> Pro Expert</span>
+                        <h4>정밀 연출 8~10단계</h4>
                     </div>
-                    <div class="mode-card-body">
-                        <p>소셜 썸네일, 브랜드 포스터, 제품 그래픽 등 정적인 디자인의 레이아웃과 고유 작가 스타일을 정교하게 매핑합니다.</p>
-                        <ul class="mode-bullets">
-                            <li><i class="fa-solid fa-circle-check"></i> <b>8단계 정밀 완성</b></li>
-                            <li><i class="fa-solid fa-circle-check"></i> <b>20인의 거장 작가 스타일 DB</b></li>
-                            <li><i class="fa-solid fa-circle-check"></i> <b>디자인 레이아웃 제어</b></li>
-                            <li><i class="fa-solid fa-circle-check"></i> <b>라이팅 및 표면 질감</b></li>
-                        </ul>
-                    </div>
+                    <p class="dual-card-desc">카메라 무빙, 렌즈, 조명, 오디오 및 동적 타임라인까지 완벽하게 제어하는 전문가용 모드입니다.</p>
+                    <ul class="mode-bullets" style="margin-bottom: 20px;">
+                        <li><i class="fa-solid fa-circle-check"></i> 비디오 10단계 / 이미지 8단계</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 동적 타임라인 &amp; 20인 작가 DB</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 정밀 디테일 렌즈 &amp; 라이팅</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 전문가용 고화질 템플릿</li>
+                    </ul>
+                    <a href="studio.html?genMode=pro" class="btn-dual-enter btn-pro-enter" data-gen-mode="pro">
+                        🎬 Pro Expert 시작 <i class="fa-solid fa-arrow-right"></i>
+                    </a>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Common Steps Flow Section -->
-        <section class="common-steps-section">
+        <section class="common-steps-section" style="margin-bottom: 20px;">
             <h3 class="steps-section-title"><i class="fa-solid fa-route"></i> 프롬프트 빌더 공통 프로세스</h3>
             <div class="steps-flow-container">
                 <div class="step-flow-item">
                     <div class="step-flow-number">Step 01</div>
-                    <div class="step-flow-icon"><i class="fa-solid fa-sliders"></i></div>
-                    <h4>모드 &amp; 프리셋 설정</h4>
-                    <p>결과물 형식(비디오/이미지)을 결정하고, 완성형 프리셋과 작가 스타일을 매핑합니다.</p>
+                    <div class="step-flow-icon"><i class="fa-solid fa-shapes"></i></div>
+                    <h4>비디오/오디오 모드 선택</h4>
+                    <p>비디오/이미지 형태 및 Fast Lite / Pro Expert 작업 모드를 결정합니다.</p>
                 </div>
                 
                 <div class="step-flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-                
+
                 <div class="step-flow-item">
                     <div class="step-flow-number">Step 02</div>
-                    <div class="step-flow-icon"><i class="fa-solid fa-cubes"></i></div>
-                    <h4>세부 연출 기획</h4>
-                    <p>인물의 디테일(헤어, 메이크업 등), 의상 스타일, 제품 특징과 공간 배경을 설정합니다.</p>
+                    <div class="step-flow-icon"><i class="fa-solid fa-sliders"></i></div>
+                    <h4>콘셉트 &amp; 프리셋 설정</h4>
+                    <p>기본 콘셉트를 설정하고 완성형 프리셋과 작가 스타일을 로드합니다.</p>
                 </div>
                 
                 <div class="step-flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
                 
                 <div class="step-flow-item">
                     <div class="step-flow-number">Step 03</div>
-                    <div class="step-flow-icon"><i class="fa-solid fa-camera"></i></div>
-                    <h4>카메라 &amp; 무브먼트</h4>
-                    <p>렌즈 초점거리, 구도, 카메라 동적 무브먼트 및 세부 오디오/타임라인 요소를 구성합니다.</p>
+                    <div class="step-flow-icon"><i class="fa-solid fa-cubes"></i></div>
+                    <h4>세부 연출 기획</h4>
+                    <p>인물 디테일, 의상 스타일, 제품 특징과 공간 배경을 설정합니다.</p>
                 </div>
                 
                 <div class="step-flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
                 
                 <div class="step-flow-item">
                     <div class="step-flow-number">Step 04</div>
+                    <div class="step-flow-icon"><i class="fa-solid fa-camera"></i></div>
+                    <h4>카메라 &amp; 무브먼트</h4>
+                    <p>렌즈, 구도, 카메라 무브먼트 및 오디오/타임라인 요소를 구성합니다.</p>
+                </div>
+                
+                <div class="step-flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                
+                <div class="step-flow-item">
+                    <div class="step-flow-number">Step 05</div>
                     <div class="step-flow-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
                     <h4>실시간 조립 &amp; 완성</h4>
-                    <p>입력에 맞춰 실시간으로 조합 및 번역된 고품질 프롬프트를 확인하고 원클릭 복사합니다.</p>
+                    <p>입력에 맞춰 실시간으로 조합된 고품질 프롬프트를 원클릭 복사합니다.</p>
                 </div>
             </div>
-
         </section>
+
     </main>
 
     <!-- Footer -->
@@ -766,26 +756,12 @@
                 });
             }
 
-            // Mode Toggle Switcher Handler via clicking Cards
-            const modeCards = document.querySelectorAll('.mode-card');
-            const mainStartBtn = document.querySelector('.btn-enter-studio');
-
-            // Set initial state
-            if (mainStartBtn) {
-                mainStartBtn.setAttribute('href', 'studio.html?mode=video');
-            }
-
-            modeCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    modeCards.forEach(c => c.classList.remove('active'));
-                    card.classList.add('active');
-
-                    const isVideo = card.classList.contains('mode-video-card');
-                    const currentMode = isVideo ? 'video' : 'image';
-
-                    if (mainStartBtn) {
-                        mainStartBtn.setAttribute('href', `studio.html?mode=${currentMode}`);
-                    }
+            // Dual Mode Enter Button Handler
+            const dualEnterBtns = document.querySelectorAll('.btn-dual-enter');
+            dualEnterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const mode = btn.getAttribute('data-gen-mode') || 'lite';
+                    localStorage.setItem('genMode', mode);
                 });
             });
         });

@@ -2,16 +2,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Application State ---
     const urlParams = new URLSearchParams(window.location.search);
     let selectedMode = urlParams.get('mode') === 'image' ? 'image' : 'video'; // 'video' or 'image'
-    let selectedPurpose = selectedMode === 'video' ? 'product' : 'thumbnail_poster';
+    let currentGenMode = urlParams.get('genMode') || localStorage.getItem('genMode') || 'pro'; // 'lite' or 'pro'
+    if (currentGenMode !== 'lite' && currentGenMode !== 'pro') {
+        currentGenMode = 'pro';
+    }
+
+    function getConfigsForMode(mode, genMode) {
+        if (genMode === 'lite') {
+            return mode === 'video' ? window.litePurposeConfigs : window.liteImageConfigs;
+        } else {
+            return mode === 'video' ? window.purposeConfigs : window.imageConfigs;
+        }
+    }
+
+    function getTotalStepsForMode(mode, genMode) {
+        if (genMode === 'lite') {
+            return mode === 'video' ? 5 : 4; // 5 for video lite (4 steps + 1 assemble), 4 for image lite (3 steps + 1 assemble)
+        } else {
+            return mode === 'video' ? 10 : 8; // 10 for video pro, 8 for image pro
+        }
+    }
+
+    let currentConfigs = getConfigsForMode(selectedMode, currentGenMode);
+    let selectedPurpose = Object.keys(currentConfigs)[0] || (selectedMode === 'video' ? 'product' : 'thumbnail_poster');
     let currentStep = 1;
-    let totalSteps = selectedMode === 'video' ? 10 : 8; // 10 for video, 8 for image
+    let totalSteps = getTotalStepsForMode(selectedMode, currentGenMode);
 
     let videoFormData = {};
     let imageFormData = {};
     let formData = selectedMode === 'video' ? videoFormData : imageFormData; // Reference pointing to active mode's form data
-
-    // Configurations loaded from configs.js
-    let currentConfigs = selectedMode === 'video' ? window.purposeConfigs : window.imageConfigs;
 
     // Elements DOM References
     const dynamicStepsNav = document.getElementById('dynamic-steps-nav');
@@ -1427,8 +1446,62 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mode Switch Handler
     const btnModeVideo = document.getElementById('mode-video');
     const btnModeImage = document.getElementById('mode-image');
+    const btnGenModeLite = document.getElementById('gen-mode-lite');
+    const btnGenModePro = document.getElementById('gen-mode-pro');
     const appTitle = document.getElementById('app-title');
     const appSubtitle = document.getElementById('app-subtitle');
+
+    function updateGenModeUI() {
+        if (btnGenModeLite && btnGenModePro) {
+            if (currentGenMode === 'lite') {
+                btnGenModeLite.classList.add('active');
+                btnGenModePro.classList.remove('active');
+            } else {
+                btnGenModePro.classList.add('active');
+                btnGenModeLite.classList.remove('active');
+            }
+        }
+    }
+
+    function switchGenMode(newGenMode) {
+        if (currentGenMode === newGenMode) return;
+
+        if (hasAnyInputData()) {
+            if (!confirm('작업 모드를 변경하면 현재 작성 중인 프롬프트 내용이 모두 초기화됩니다. 계속하시겠습니까?')) {
+                return;
+            }
+        }
+
+        currentGenMode = newGenMode;
+        localStorage.setItem('genMode', currentGenMode);
+
+        currentConfigs = getConfigsForMode(selectedMode, currentGenMode);
+        totalSteps = getTotalStepsForMode(selectedMode, currentGenMode);
+        selectedPurpose = Object.keys(currentConfigs)[0];
+
+        if (selectedMode === 'video') {
+            videoFormData = {};
+            formData = videoFormData;
+        } else {
+            imageFormData = {};
+            formData = imageFormData;
+        }
+
+        currentStep = 1;
+
+        if (selectedArtistStyleBox) selectedArtistStyleBox.style.display = 'none';
+        if (artistStyleSelect) artistStyleSelect.value = '';
+
+        updateGenModeUI();
+        renderApp();
+        renderPurposeSelector();
+        updatePreview();
+        updatePresetSelectOptions();
+        goToStep(1);
+
+        const modeLabel = currentGenMode === 'lite' ? 'Fast Lite (3~4단계)' : 'Pro Expert (8~10단계)';
+        showToast(`작업 모드가 '${modeLabel}'(으)로 전환되었습니다.`, 'info');
+    }
 
     function switchMode(newMode) {
         if (selectedMode === newMode) return;
@@ -1441,6 +1514,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         selectedMode = newMode;
+        currentConfigs = getConfigsForMode(selectedMode, currentGenMode);
+        totalSteps = getTotalStepsForMode(selectedMode, currentGenMode);
+        selectedPurpose = Object.keys(currentConfigs)[0];
 
         // Toggle button active classes
         if (selectedMode === 'video') {
@@ -1448,22 +1524,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnModeImage) btnModeImage.classList.remove('active');
             if (appTitle) appTitle.textContent = 'AI Video Prompt Generator';
             if (appSubtitle) appSubtitle.textContent = '영상의 목적에 맞게 단계별 세부 요소를 입력하여 고품질 AI 영상 프롬프트를 완성하세요.';
-            
-            // Switch configs and default purpose
-            currentConfigs = window.purposeConfigs;
-            selectedPurpose = 'product';
-            totalSteps = 10;
             formData = videoFormData;
         } else {
             if (btnModeVideo) btnModeVideo.classList.remove('active');
             if (btnModeImage) btnModeImage.classList.add('active');
             if (appTitle) appTitle.textContent = 'AI Image Prompt Generator';
             if (appSubtitle) appSubtitle.textContent = '이미지의 목적에 맞게 단계별 세부 요소를 입력하여 고품질 AI 이미지 프롬프트를 완성하세요.';
-
-            // Switch configs and default purpose
-            currentConfigs = window.imageConfigs;
-            selectedPurpose = 'thumbnail_poster';
-            totalSteps = 8;
             formData = imageFormData;
         }
 
@@ -1498,6 +1564,12 @@ document.addEventListener('DOMContentLoaded', () => {
         btnModeVideo.addEventListener('click', () => switchMode('video'));
         btnModeImage.addEventListener('click', () => switchMode('image'));
     }
+
+    if (btnGenModeLite && btnGenModePro) {
+        btnGenModeLite.addEventListener('click', () => switchGenMode('lite'));
+        btnGenModePro.addEventListener('click', () => switchGenMode('pro'));
+    }
+
 
     // Preset Selection Change Event
     if (presetSelect) {
@@ -1617,6 +1689,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     // --- First Application Boot ---
+    updateGenModeUI();
+
     // Sync button classes and text based on selectedMode
     if (selectedMode === 'video') {
         if (btnModeVideo) btnModeVideo.classList.add('active');
