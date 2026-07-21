@@ -1058,6 +1058,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function replaceTimelineBlock(text, isHtml = false) {
+        if (!formData || !formData.timeline || formData.timeline.length === 0) return text;
+        
+        let timelineStr = '';
+        formData.timeline.forEach(scene => {
+            const startVal = scene.start !== undefined ? scene.start : 0;
+            const endVal = scene.end !== undefined ? scene.end : 0;
+            const timeRange = `${startVal}초 ~ ${endVal}초`;
+            const desc = scene.desc && scene.desc.trim() !== '' ? scene.desc.trim() : '기본 카메라 앵글 유지';
+            if (isHtml) {
+                timelineStr += `<div style="margin-bottom:4px;"><strong>[${timeRange}]</strong> ${desc}</div>`;
+            } else {
+                timelineStr += `${timeRange}: ${desc}\n`;
+            }
+        });
+
+        if (isHtml) {
+            return text.replace(/\[타임라인\][\s\S]*?(?=\n\[오디오\]|\n\[금지 요소\]|$)/, `<span class="preview-section-header">[동적 타임라인 연출]</span>\n${timelineStr.trim()}\n`);
+        }
+        return text.replace(/\[타임라인\][\s\S]*?(?=\n\[오디오\]|\n\[금지 요소\]|$)/, `[동적 타임라인 연출]\n${timelineStr.trim()}\n`);
+    }
+
     /**
      * Assemble final raw text prompt
      */
@@ -1176,10 +1202,6 @@ document.addEventListener('DOMContentLoaded', () => {
             finalOutputTextarea.value = result;
             showToast('영문 변환에 실패하여 국문 프롬프트로 출력합니다. 네트워크 연결을 확인해 주세요.', 'error');
         }
-    }
-
-    function escapeRegExp(string) {
-        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
     /**
