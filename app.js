@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Application State ---
     const urlParams = new URLSearchParams(window.location.search);
     let isEnhanced = false;
+    let lastTranslatedPrompt = '';
     let selectedMode = urlParams.get('mode') === 'image' ? 'image' : 'video'; // 'video' or 'image'
     let currentGenMode = urlParams.get('genMode') || localStorage.getItem('genMode') || 'pro'; // 'lite' or 'pro'
     if (currentGenMode !== 'lite' && currentGenMode !== 'pro') {
@@ -1208,7 +1209,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let finalPrompt = englishPrompt || result;
         
         if (isEnhanced) {
-            finalPrompt += "\n\n[Enhancement Guidance]\nGenerated with photorealistic textures, seamless rendering, sharp focus, 8k resolution details, natural lighting and shadows, high fidelity depth, and corrected anatomical proportions.";
+            if (selectedMode === 'video') {
+                finalPrompt = `I plan to create a video using the following prompt. Please review the prompt and let me know the improved version you have organized.\n\n#####prompt\n` + finalPrompt;
+            } else {
+                finalPrompt = `I plan to create an image using the following prompt. Please review the prompt and let me know the improved version.\n\n#####prompt\n` + finalPrompt;
+            }
         }
         
         finalOutputTextarea.value = finalPrompt;
