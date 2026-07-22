@@ -17,7 +17,7 @@ window.purposeConfigs = {
         ],
         fields: {
             // Step 1
-            'step1-length': { label: '영상 길이', token: '{영상 길이}', type: 'input', placeholder: '예: 15초', tags: ['15초', '30초', '60초', '90초'], required: true, step: 1 },
+            'step1-length': { label: '영상 길이', token: '{영상 길이}', type: 'input', placeholder: '예: 8초', tags: ['8초', '10초', '15초', '20초'], required: true, step: 1 },
             'step1-ratio': { label: '화면 비율 (종횡비)', token: '{영상 비율}', type: 'input', placeholder: '예: 세로형 9:16', tags: ['세로형 9:16 (모바일 쇼츠용)', '가로형 16:9 (유튜브/방송용)', '정방형 1:1 (SNS 피드용)', '시네마스코프 2.39:1 (영화/티저용)'], required: true, step: 1 },
             'step1-genre': { label: '콘셉트 및 장르', token: '{영상 장르}', type: 'input', placeholder: '예: 한국 뷰티 광고', tags: ['한국 뷰티 광고', '하이엔드 테크 광고', '패션 브랜드 필름', '감성 라이프스타일 필름'], required: true, step: 1 },
             'step1-purpose': { label: '제작 목적', token: '{광고/영상 목적}', type: 'input', placeholder: '예: 프리미엄 스킨케어 세럼 홍보', tags: ['신제품 스킨케어 세럼 홍보', 'IT 스마트폰 론칭 티저', '무선 이어폰 기능 소구 광고', '에코 텀블러 바이럴 홍보'], required: true, step: 1 },
@@ -183,7 +183,7 @@ window.purposeConfigs = {
 [최종 목표]
 {목표}`,
         examples: {
-            'step1-length': '15초',
+            'step1-length': '8초',
             'step1-ratio': '세로형 9:16',
             'step1-genre': '한국 뷰티 광고',
             'step1-purpose': '무브랜드 프리미엄 스킨케어 세럼 홍보',
@@ -254,7 +254,7 @@ window.purposeConfigs = {
             { num: 9, title: '금지 요소', badge: '네거티브 및 최종 제작 목표' }
         ],
         fields: {
-            'step1-length': { label: '영상 길이', token: '{영상 길이}', type: 'input', placeholder: '예: 15초', tags: ['15초', '30초', '60초', '90초'], required: true, step: 1 },
+            'step1-length': { label: '영상 길이', token: '{영상 길이}', type: 'input', placeholder: '예: 8초', tags: ['8초', '10초', '15초', '20초'], required: true, step: 1 },
             'step1-ratio': { label: '화면 비율 (종횡비)', token: '{영상 비율}', type: 'input', placeholder: '예: 가로형 16:9', tags: ['가로형 16:9', '가로형 2.39:1 (시네마스코프)', '세로형 9:16', '정방형 1:1'], required: true, step: 1 },
             'step1-genre': { label: '콘셉트 및 장르', token: '{영상 장르}', type: 'input', placeholder: '예: 느와르 드라마', tags: ['느와르 드라마', 'SF 서스펜스', '판타지 어드벤처', '미스터리 호러 스릴러'], required: true, step: 1 },
             'step1-purpose': { label: '영상 목적', token: '{촬영 목적}', type: 'input', placeholder: '예: 단편 영화의 긴장감 넘치는 티저 예고편', tags: ['단편 영화 미스터리 티저', 'SF 독립영화 오프닝 시퀀스', '판타지 드라마 콘셉트 클립', '하드보일드 누아르 예고편'], required: true, step: 1 },
@@ -419,7 +419,7 @@ window.purposeConfigs = {
 [최종 목표]
 {목표}`,
         examples: {
-            'step1-length': '15초',
+            'step1-length': '8초',
             'step1-ratio': '가로형 16:9',
             'step1-genre': '느와르 드라마',
             'step1-purpose': '단편 영화의 긴장감 넘치는 티저 예고편',
@@ -490,7 +490,7 @@ window.purposeConfigs = {
             { num: 9, title: '금지 요소', badge: '네거티브 및 최종 제작 목표' }
         ],
         fields: {
-            'step1-length': { label: '영상 길이', token: '{영상 길이}', type: 'input', placeholder: '예: 15초', tags: ['15초', '30초', '60초', '90초'], required: true, step: 1 },
+            'step1-length': { label: '영상 길이', token: '{영상 길이}', type: 'input', placeholder: '예: 8초', tags: ['8초', '10초', '15초', '20초'], required: true, step: 1 },
             'step1-ratio': { label: '화면 비율 (종횡비)', token: '{영상 비율}', type: 'input', placeholder: '예: 세로형 9:16', tags: ['세로형 9:16 (모바일 쇼츠용)', '가로형 16:9 (유튜브/방송용)', '정방형 1:1 (SNS 피드용)', '시네마스코프 2.39:1 (영화/티저용)'], required: true, step: 1 },
             'step1-genre': { label: '콘셉트 및 장르', token: '{영상 장르}', type: 'input', placeholder: '예: 일상 라이프스타일 브이로그', tags: ['감성 카페 브이로그', '미니멀리스트 룸투어', '도쿄 여행 브이로그', '주말 일상 힐링 다이어리'], required: true, step: 1 },
             'step1-purpose': { label: '촬영 목적', token: '{촬영 목적}', type: 'input', placeholder: '예: 감성적인 미니멀리스트의 아침 루틴 브이로그', tags: ['미니멀리스트 아침 루틴 브이로그', '감성 플랜테리어 카페 투어', '주말 홈베이킹 및 정리 루틴', '도쿄 골목길 감성 여행 기록'], required: true, step: 1 },
@@ -648,7 +648,7 @@ window.purposeConfigs = {
 [최종 목표]
 {목표}`,
         examples: {
-            'step1-length': '15초',
+            'step1-length': '8초',
             'step1-ratio': '세로형 9:16',
             'step1-genre': '일상 라이프스타일 브이로그',
             'step1-purpose': '감성적인 미니멀리스트의 아침 루틴 브이로그',

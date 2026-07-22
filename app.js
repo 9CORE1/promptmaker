@@ -298,9 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
      * Get total video duration parsed from Step 1
      */
     function getVideoTotalDuration() {
-        const lengthVal = formData['step1-length'] || '15초';
+        const lengthVal = formData['step1-length'] || '8초';
         const num = parseInt(lengthVal.replace(/[^0-9]/g, ''), 10);
-        return isNaN(num) || num <= 0 ? 15 : num;
+        return isNaN(num) || num <= 0 ? 8 : num;
     }
 
     /**
@@ -837,7 +837,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const config = currentConfigs[selectedPurpose];
         Object.keys(config.fields).forEach(id => {
-            formData[id] = '';
+            if (id === 'step1-length' && selectedMode === 'video') {
+                formData[id] = '8초';
+            } else {
+                formData[id] = '';
+            }
         });
 
         // Re-render UI and updates
@@ -1554,7 +1558,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset and pre-initialize current mode's form values
         const config = currentConfigs[selectedPurpose];
         Object.keys(config.fields).forEach(id => {
-            formData[id] = '';
+            if (id === 'step1-length' && selectedMode === 'video') {
+                formData[id] = '8초';
+            } else {
+                formData[id] = '';
+            }
         });
         delete formData.timeline;
 
@@ -1725,7 +1733,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Pre-initialize empty values
     const initialConfig = currentConfigs[selectedPurpose];
     Object.keys(initialConfig.fields).forEach(id => {
-        formData[id] = '';
+        if (id === 'step1-length' && selectedMode === 'video') {
+            formData[id] = '8초';
+        } else {
+            formData[id] = '';
+        }
     });
     
     renderApp();
