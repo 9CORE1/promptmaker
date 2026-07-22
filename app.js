@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Application State ---
     const urlParams = new URLSearchParams(window.location.search);
+    let isEnhanced = false;
     let selectedMode = urlParams.get('mode') === 'image' ? 'image' : 'video'; // 'video' or 'image'
     let currentGenMode = urlParams.get('genMode') || localStorage.getItem('genMode') || 'pro'; // 'lite' or 'pro'
     if (currentGenMode !== 'lite' && currentGenMode !== 'pro') {
@@ -819,6 +820,14 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedPurpose = newPurpose;
         currentStep = 1;
         
+        isEnhanced = false;
+        const btnEnhancePrompt = document.getElementById('btn-enhance-prompt');
+        if (btnEnhancePrompt) {
+            btnEnhancePrompt.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> 프롬프트 개선 추가하기';
+            btnEnhancePrompt.classList.remove('btn-danger');
+            btnEnhancePrompt.classList.add('btn-secondary');
+        }
+        
         if (selectedArtistStyleBox) {
             selectedArtistStyleBox.style.display = 'none';
         }
@@ -1196,10 +1205,15 @@ document.addEventListener('DOMContentLoaded', () => {
         finalOutputTextarea.value = "영문 프롬프트로 변환 중입니다 (Translating to English...)...";
         
         const englishPrompt = await translateToEnglish(result);
-        if (englishPrompt) {
-            finalOutputTextarea.value = englishPrompt;
-        } else {
-            finalOutputTextarea.value = result;
+        let finalPrompt = englishPrompt || result;
+        
+        if (isEnhanced) {
+            finalPrompt += "\n\n[Enhancement Guidance]\nGenerated with photorealistic textures, seamless rendering, sharp focus, 8k resolution details, natural lighting and shadows, high fidelity depth, and corrected anatomical proportions.";
+        }
+        
+        finalOutputTextarea.value = finalPrompt;
+        
+        if (!englishPrompt) {
             showToast('영문 변환에 실패하여 국문 프롬프트로 출력합니다. 네트워크 연결을 확인해 주세요.', 'error');
         }
     }
@@ -1348,36 +1362,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /**
-     * Reset Form values
+     * Toggle Prompt Enhancement Option
      */
-    document.getElementById('btn-reset').addEventListener('click', () => {
-        if (confirm('정말로 모든 입력을 지우고 초기화하시겠습니까?')) {
-            const config = currentConfigs[selectedPurpose];
-            Object.keys(config.fields).forEach(id => {
-                const inputEl = document.getElementById(id);
-                if (inputEl) {
-                    inputEl.value = '';
-                    formData[id] = '';
-                }
-                const navItem = document.querySelector(`.nav-item[data-step="${config.fields[id].step}"]`);
-                if (navItem) navItem.classList.remove('completed');
-            });
-            delete formData.timeline;
-            
-            if (selectedArtistStyleBox) {
-                selectedArtistStyleBox.style.display = 'none';
+    const btnEnhancePrompt = document.getElementById('btn-enhance-prompt');
+    if (btnEnhancePrompt) {
+        btnEnhancePrompt.addEventListener('click', () => {
+            isEnhanced = !isEnhanced;
+            if (isEnhanced) {
+                btnEnhancePrompt.innerHTML = '<i class="fa-solid fa-wand-magic"></i> 프롬프트 개선 삭제하기';
+                btnEnhancePrompt.classList.remove('btn-secondary');
+                btnEnhancePrompt.classList.add('btn-danger');
+                showToast('프롬프트 개선 지침이 추가되었습니다.', 'success');
+            } else {
+                btnEnhancePrompt.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> 프롬프트 개선 추가하기';
+                btnEnhancePrompt.classList.remove('btn-danger');
+                btnEnhancePrompt.classList.add('btn-secondary');
+                showToast('프롬프트 개선 지침이 제거되었습니다.', 'info');
             }
-            if (presetSelect) presetSelect.value = '';
-            if (artistStyleSelect) artistStyleSelect.value = '';
-            
-            updatePreview();
-            if (currentStep === totalSteps) {
-                assembleFinalPrompt();
-            }
-            goToStep(1);
-            showToast('데이터가 성공적으로 초기화되었습니다.', 'info');
-        }
-    });
+            assembleFinalPrompt();
+        });
+    }
 
     /**
      * Copy final output to clipboard
@@ -1568,6 +1572,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Reset step
         currentStep = 1;
+
+        isEnhanced = false;
+        const btnEnhancePrompt = document.getElementById('btn-enhance-prompt');
+        if (btnEnhancePrompt) {
+            btnEnhancePrompt.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> 프롬프트 개선 추가하기';
+            btnEnhancePrompt.classList.remove('btn-danger');
+            btnEnhancePrompt.classList.add('btn-secondary');
+        }
 
         if (selectedArtistStyleBox) {
             selectedArtistStyleBox.style.display = 'none';
