@@ -213,27 +213,23 @@ document.addEventListener('DOMContentLoaded', () => {
         Object.keys(config.fields).forEach(id => {
             const inputEl = document.getElementById(id);
             if (inputEl) {
-                inputEl.addEventListener('input', (e) => {
-                    formData[id] = e.target.value;
+                inputEl.addEventListener('blur', (e) => {
+                    let val = e.target.value;
+                    
+                    // Auto-append '초' for video length if only numbers are entered on blur
+                    if (id === 'step1-length' && selectedMode === 'video') {
+                        const trimmedVal = val.trim();
+                        if (trimmedVal && /^\d+$/.test(trimmedVal)) {
+                            val = trimmedVal + '초';
+                            e.target.value = val;
+                        }
+                    }
+                    
+                    formData[id] = val;
                     updatePreview();
                     updateStepCompletedState(id);
                     updateTagHighlights(id);
                 });
-
-                // Auto-append '초' for video length if only numbers are entered on blur
-                if (id === 'step1-length' && selectedMode === 'video') {
-                    inputEl.addEventListener('blur', (e) => {
-                        const val = e.target.value.trim();
-                        if (val && /^\d+$/.test(val)) {
-                            const formattedVal = val + '초';
-                            e.target.value = formattedVal;
-                            formData[id] = formattedVal;
-                            updatePreview();
-                            updateStepCompletedState(id);
-                            updateTagHighlights(id);
-                        }
-                    });
-                }
             }
         });
 
@@ -568,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         mountPoint.querySelectorAll('.scene-desc-textarea').forEach(textarea => {
-            textarea.addEventListener('input', (e) => {
+            textarea.addEventListener('blur', (e) => {
                 const idx = parseInt(textarea.getAttribute('data-index'), 10);
                 formData.timeline[idx].desc = e.target.value;
                 syncTimelineToFormData();
