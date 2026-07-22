@@ -1668,3 +1668,17 @@ body.light-mode .gen-mode-toggle-container {
     color: #ffffff;
     box-shadow: var(--neon-shadow);
 }
+
+/* ChatGPT and Claude sub-buttons style */
+.output-sub-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-sub-action {
+    flex: 1;
+    text-decoration: none;
+    padding: 10px 0;
+    font-size: 0.9rem;
+}

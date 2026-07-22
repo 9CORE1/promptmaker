@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Replace template timeline placeholders with dynamic output
      */
-    function replaceTimelineBlock(templateText, isHtml = false) {
+    function replaceTimelineBlockForPreview(templateText, isHtml = false) {
         if (selectedMode !== 'video') return templateText;
         
         if (!formData.timeline) {
@@ -1062,7 +1062,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    function replaceTimelineBlock(text, isHtml = false) {
+    function replaceTimelineBlockForAssemble(text, isHtml = false) {
         if (!formData || !formData.timeline || formData.timeline.length === 0) return text;
         
         let timelineStr = '';
@@ -1155,7 +1155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (selectedMode === 'video') {
-            result = replaceTimelineBlock(result, false);
+            result = replaceTimelineBlockForAssemble(result, false);
         }
 
         // 3. Post-Process the Assembled Text Prompt to resolve conflicts
@@ -1245,7 +1245,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (selectedMode === 'video') {
-            previewHtml = replaceTimelineBlock(previewHtml, true);
+            previewHtml = replaceTimelineBlockForPreview(previewHtml, true);
         }
 
         previewContent.innerHTML = previewHtml;
