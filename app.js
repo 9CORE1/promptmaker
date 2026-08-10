@@ -691,27 +691,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Get presets object array based on currentGenMode and selectedPurpose
+     */
+    function getPresetsForCurrentMode() {
+        if (currentGenMode === 'lite') {
+            return (window.litePresetsConfig && window.litePresetsConfig[selectedPurpose]) ? window.litePresetsConfig[selectedPurpose] : [];
+        } else {
+            return (window.presetsConfig && window.presetsConfig[selectedPurpose]) ? window.presetsConfig[selectedPurpose] : [];
+        }
+    }
+
+    /**
      * Update preset select dropdown options based on current selectedPurpose
      */
     function updatePresetSelectOptions() {
-        if (!presetSelect) return;
-        presetSelect.innerHTML = '<option value="">-- 프리셋을 선택하여 폼을 자동으로 채우기 --</option>';
+        const selectEl = document.getElementById('preset-select') || presetSelect;
+        if (!selectEl) return;
         
-        const presets = window.presetsConfig[selectedPurpose];
+        selectEl.innerHTML = '<option value="">-- 프리셋을 선택하여 폼을 자동으로 채우기 --</option>';
+        selectEl.value = '';
+        
+        const presets = getPresetsForCurrentMode();
+        const presetContainer = document.getElementById('preset-selector-container');
+        
         if (presets && presets.length > 0) {
             presets.forEach((preset, index) => {
                 const option = document.createElement('option');
                 option.value = index;
                 option.textContent = preset.name;
-                presetSelect.appendChild(option);
+                selectEl.appendChild(option);
             });
-            if (currentStep === 1) {
-                document.getElementById('preset-selector-container').style.display = 'flex';
-            } else {
-                document.getElementById('preset-selector-container').style.display = 'none';
+            if (presetContainer) {
+                presetContainer.style.display = (currentStep === 1) ? 'flex' : 'none';
             }
         } else {
-            document.getElementById('preset-selector-container').style.display = 'none';
+            if (presetContainer) {
+                presetContainer.style.display = 'none';
+            }
         }
     }
 
@@ -893,15 +909,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (step === 1) {
             if (purposeContainer) purposeContainer.style.display = 'block';
             if (artistStyleContainer) artistStyleContainer.style.display = 'flex';
-            
-            const presets = window.presetsConfig[selectedPurpose];
-            if (presetContainer) {
-                if (presets && presets.length > 0) {
-                    presetContainer.style.display = 'flex';
-                } else {
-                    presetContainer.style.display = 'none';
-                }
-            }
+            updatePresetSelectOptions();
         } else {
             if (purposeContainer) purposeContainer.style.display = 'none';
             if (presetContainer) presetContainer.style.display = 'none';
@@ -986,6 +994,12 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             scrollToActiveSection(step);
         }, 100);
+
+        // Reset form section scroll to top
+        const formSection = document.querySelector('.form-section');
+        if (formSection) {
+            formSection.scrollTop = 0;
+        }
     }
 
     /**
@@ -1620,7 +1634,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const index = e.target.value;
             if (index === '') return;
             
-            const presets = window.presetsConfig[selectedPurpose];
+            const presets = getPresetsForCurrentMode();
             const selectedPreset = presets[index];
             if (selectedPreset) {
                 // Populate formData with preset fields
